@@ -1,0 +1,32 @@
+{
+  "name": "gdg-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm --filter ./web dev",
+    "build": "pnpm --filter ./web build && pnpm --filter ./functions build",
+    "lint": "biome check . && pnpm run typecheck",
+    "fix": "biome check --write .",
+    "typecheck": "pnpm --filter ./web exec tsc -b && pnpm --filter ./functions exec tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.15.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.15.0",
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.2",
+    "firebase-tools": "^15.34.1"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

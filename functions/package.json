@@ -1,8 +1,8 @@
 {
   "name": "functions",
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build": "tsc --noEmit && tsup src/index.ts --format cjs --platform node --target es2022 --out-dir lib --sourcemap --clean",
+    "build:watch": "tsup src/index.ts --format cjs --platform node --target es2022 --out-dir lib --sourcemap --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",

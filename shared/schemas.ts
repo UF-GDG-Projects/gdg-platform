@@ -23,6 +23,22 @@ export const eventSchema = z.object({
   title: z.string(),
 });
 
+const requestDateSchema = z.iso
+  .datetime({ offset: true })
+  .transform((value) => new Date(value));
+
+export const createEventSchema = eventSchema
+  .omit({ created_at: true })
+  .extend({
+    title: z.string().trim().min(1, "Title is required."),
+    starts_at: requestDateSchema,
+    ends_at: requestDateSchema,
+  })
+  .refine((event) => event.ends_at > event.starts_at, {
+    message: "End time must be after start time.",
+    path: ["ends_at"],
+  });
+
 export const profileSchema = z.object({
   attended_ids: z.array(z.string()),
   created_at: firestoreDateSchema,

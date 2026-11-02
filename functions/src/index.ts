@@ -113,6 +113,62 @@ export const createEvent = onRequest(async (request, response) => {
   }
 });
 
+export const deleteEvent = onRequest(async (request, response) => {
+  if (request.method !== "DELETE") {
+    response.set("Allow", "DELETE");
+    response.status(405).json({ error: "Use a DELETE request." });
+    return;
+  }
+
+  // Allow local testing while organizer/admin authorization is pending.
+  if (
+    process.env.FUNCTIONS_EMULATOR !== "true" ||
+    !process.env.FIRESTORE_EMULATOR_HOST
+  ) {
+    response.status(403).json({
+      error: "Event deletion is currently available only in local testing.",
+    });
+    return;
+  }
+
+  const documentId = request.query.document_id;
+  if (
+    typeof documentId !== "string" ||
+    documentId.trim().length === 0 ||
+    documentId.includes("/") ||
+    documentId === "." ||
+    documentId === ".." ||
+    Buffer.byteLength(documentId, "utf8") > 1500
+  ) {
+    response.status(400).json({ error: "A valid document_id is required." });
+    return;
+  }
+
+  try {
+    const database = getFirestore();
+    const document = database.collection("events").doc(documentId);
+    const deleted = await database.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(document);
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      transaction.delete(document);
+      return true;
+    });
+
+    if (!deleted) {
+      response.status(404).json({ error: "Event not found." });
+      return;
+    }
+
+    response.status(200).json({ document_id: documentId });
+  } catch (error) {
+    console.error("Failed to delete event:", error);
+    response.status(500).json({ error: "Unable to delete event." });
+  }
+});
+
 // export const helloWorld = onRequest((request, response) => {
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");

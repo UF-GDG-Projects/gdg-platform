@@ -1,11 +1,12 @@
 import { Outlet, useLocation } from "react-router";
-import Navbar from "./Navbar";
 import backgroundShapes from "../assets/events-background.svg";
+import Navbar from "./Navbar";
 
 export default function Layout() {
   const { pathname } = useLocation();
   // The Resources frame in Figma places its Shapes illustration lower than Events.
-  const backgroundTop = pathname === "/resources" ? "top-[200px]" : "top-[42px]";
+  const backgroundTop =
+    pathname === "/resources" ? "top-[200px]" : "top-[42px]";
 
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-[#fafafa] font-sans text-[#2d2d2d]">

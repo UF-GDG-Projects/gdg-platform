@@ -19,7 +19,9 @@ export default function EventCard({ event }: { event: GDGEvent }) {
 
       <div className="relative flex min-h-[363px] flex-col border border-[#ededed] bg-white p-[13px] transition-transform duration-200 group-hover:-translate-y-0.5">
         {/* Photo / color cover: use an image URL once real event photos exist. */}
-        <div className={`relative min-h-[255px] flex-1 overflow-hidden ${coverColors[event.accent]}`}>
+        <div
+          className={`relative min-h-[255px] flex-1 overflow-hidden ${coverColors[event.accent]}`}
+        >
           {event.imageUrl ? (
             <img
               src={event.imageUrl}
@@ -38,7 +40,9 @@ export default function EventCard({ event }: { event: GDGEvent }) {
 
         {/* Small distinct bottom block: event name. */}
         <div className="mt-[13px] flex min-h-[66px] items-center bg-[#f2f2f2] px-4 py-3">
-          <h2 className="text-base font-semibold leading-snug text-[#292929]">{event.title}</h2>
+          <h2 className="text-base font-semibold leading-snug text-[#292929]">
+            {event.title}
+          </h2>
         </div>
       </div>
     </article>

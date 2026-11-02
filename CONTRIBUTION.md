@@ -1,25 +1,30 @@
 # Git Version Control Guide
 
 ## First-time Git setup
+
 ### 1. Install [Git](https://git-scm.com/install/)
 
 #### Windows
+
 Open PowerShell or Command Prompt as an Administrator and run:
 ```
 winget install --id Git.Git -e --source winget
 ```
 
 #### MacOS
+
 Open your terminal and run:
-```xcode-select --install```
+`xcode-select --install`
 
 ### 2. Link Git with your GitHub Account
+
 ```
 git config --global user.name "Name"
 git config --global user.email "you@example.com"
 ```
 
 ## Setting up the repository
+
 **1. Install [Node.js](https://nodejs.org/), [pnpm](https://pnpm.io/installation), and [VS Code](https://code.visualstudio.com/download) (recommended code editor).**
 
 **2. Clone the repo and install dependencies**
@@ -30,6 +35,7 @@ pnpm install
 ```
 
 ## Git Workflow
+
 **1. Start from `main`:**
 ```
 git switch main
@@ -46,7 +52,7 @@ git status                    # See what changed
 git add path/to/file          # Stage specific files
 git commit -m "Add ..."
 ```
-Commit messages should be short, *present tense*, and describe what the commit does. Try to make small, focused commits for easier review.
+Commit messages should be short, _present tense_, and describe what the commit does. Try to make small, focused commits for easier review.
 
 **4. Push your branch and its commits**
 ```
@@ -60,6 +66,7 @@ Main is protected so PR is required and direct commits are rejected.
 Wait for a project lead to assess and merge your changes.
 
 ## Notes
+
 - Run `git pull` frequently to ensure you are on latest branch.
 - Never commit secrets, such as `.env` files.
 - Commits should make sense and not have unrelated changes.

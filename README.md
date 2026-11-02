@@ -3,9 +3,10 @@
 UF GDG's landing page and member platform
 
 ## Stack
+
 -  Vite + React + TypeScript + Tailwind
 - Firebase (Auth, Firestore,
-Storage, Hosting), Cloud Functions
+  Storage, Hosting), Cloud Functions
 
 ## Repo map
 
@@ -19,9 +20,11 @@ Storage, Hosting), Cloud Functions
 ## Setup
 
 ### Required software
+
 You will need Git, Node.js, and pnpm.
 
 ### Clone and install
+
 ```bash
 git clone <repo-url>
 cd gdg-platform

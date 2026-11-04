@@ -7,13 +7,14 @@ export default function Events() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.15em] text-[#4285f4]">
-            Google Developer Groups · UF
+            Google Developer Group at University of Florida
           </p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Events
           </h1>
           <p className="mt-3 max-w-2xl text-base text-[#777777]">
-            Meet developers, learn together, and find your next event.
+            Meet fellow developers, learn together, and find your next GDG
+            event.
           </p>
         </div>
         <span className="rounded-full border border-[#e6e6e6] bg-white px-4 py-2 text-xs text-[#666666]">

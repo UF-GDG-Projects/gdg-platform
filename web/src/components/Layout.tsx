@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router";
 import loginShapes from "../assets/auth/login-shapes.svg";
 import signupShapes from "../assets/auth/signup-shapes.svg";
 import backgroundShapes from "../assets/events-background.svg";
+import sitePattern from "../assets/site-pattern.svg";
 import Navbar from "./Navbar";
 
 export default function Layout() {
@@ -15,7 +16,18 @@ export default function Layout() {
     pathname === "/resources" ? "top-[200px]" : "top-[42px]";
 
   return (
-    <div className="relative isolate min-h-screen overflow-hidden bg-[#fafafa] font-sans text-[#2d2d2d]">
+    <div
+      className="relative isolate min-h-screen overflow-hidden bg-[#f5f5f5] font-sans text-[#2d2d2d]"
+      style={
+        isAuth
+          ? undefined
+          : {
+              backgroundImage: `url(${sitePattern})`,
+              backgroundRepeat: "repeat",
+              backgroundSize: "250px 233px",
+            }
+      }
+    >
       {isAuth ? (
         <div
           aria-hidden="true"
@@ -40,7 +52,7 @@ export default function Layout() {
           <img
             src={backgroundShapes}
             alt=""
-            className={`relative ${backgroundTop} w-[1800px] max-w-none shrink-0 select-none`}
+            className={`relative ${backgroundTop} w-[max(100vw,900px)] max-w-none shrink-0 select-none drop-shadow-[0_7px_6px_rgba(45,45,45,0.16)]`}
           />
         </div>
       )}

@@ -13,6 +13,8 @@ const links = [
   { label: "FAQ", to: "/faq" },
 ];
 
+const DISCORD_INVITE = "https://discord.gg/B8hzpMvCQ";
+
 const styles = `
   .gdg-header { position:relative; z-index:50; margin:0 auto; padding:30px 30px 0; width:100%; max-width:1440px; box-sizing:border-box; }
   .gdg-header * { box-sizing:border-box; }
@@ -156,14 +158,16 @@ export default function Navbar() {
           >
             <InstagramIcon />
           </span>
-          <span
+          <a
+            href={DISCORD_INVITE}
+            target="_blank"
+            rel="noreferrer"
             className="gdg-social gdg-discord"
-            role="img"
-            title="Discord link not configured yet"
-            aria-label="Discord (coming soon)"
+            title="Join the GDG Discord"
+            aria-label="Join the GDG Discord"
           >
             <DiscordIcon />
-          </span>
+          </a>
         </div>
         <div className="gdg-auth">
           {profile ? (

@@ -54,9 +54,16 @@ export const getEvents = onRequest(async (request, response) => {
         address: data.address,
         location_name: data.location_name,
         points_value: data.points_value,
-        created_at: data.created_at.toDate().toISOString(),
-        starts_at: data.starts_at.toDate().toISOString(),
-        ends_at: data.ends_at.toDate().toISOString(),
+        image_url: data.image_url,
+        created_at: data.created_at?.toDate
+          ? data.created_at.toDate().toISOString()
+          : null,
+        starts_at: data.starts_at?.toDate
+          ? data.starts_at.toDate().toISOString()
+          : null,
+        ends_at: data.ends_at?.toDate
+          ? data.ends_at.toDate().toISOString()
+          : null,
       };
     });
 

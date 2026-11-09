@@ -33,17 +33,23 @@ pnpm install
 
 ### Run locally
 
+Make sure to copy `web/.env.example` to `web/.env` before running:
+
 ```bash
+cp web/.env.example web/.env
 pnpm dev
 ```
 The web app opens on http://localhost:5173 and connects to the shared Firebase project.
 
+The Firebase web values are client configuration, not service-account credentials.
+Do not add private keys or Firebase Admin credentials to the frontend environment.
+
 ### Optionals: Firebase CLI login
 
-Only needed if you deploy rules or functions to the dev project:
+Only needed if you inspect or deploy rules and functions:
 ```bash
 pnpm exec firebase login
-pnpm exec firebase use dev
+pnpm exec firebase use platformgdg
 ```
 
 ## Notes

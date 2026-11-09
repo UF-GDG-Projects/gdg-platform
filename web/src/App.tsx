@@ -2,7 +2,11 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import { DemoAccountProvider } from "./demo/DemoAccount";
 import Events from "./pages/Events";
+import FAQ from "./pages/FAQ";
+import Gallery from "./pages/Gallery";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Officers from "./pages/Officers";
 import PersonalInformation from "./pages/PersonalInformation";
 import Placeholder from "./pages/Placeholder";
 import Profile from "./pages/Profile";
@@ -14,10 +18,10 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route index element={<Placeholder title="Home" />} />
+            <Route index element={<Home />} />
             <Route path="events" element={<Events />} />
-            <Route path="gallery" element={<Placeholder title="Gallery" />} />
-            <Route path="officers" element={<Placeholder title="Officers" />} />
+            <Route path="gallery" element={<Gallery />} />
+            <Route path="officers" element={<Officers />} />
             <Route path="resources" element={<Resources />} />
             <Route path="login" element={<Login key="login" />} />
             <Route
@@ -30,7 +34,7 @@ export default function App() {
               path="profile/settings"
               element={<Profile key="settings" settingsPage />}
             />
-            <Route path="faq" element={<Placeholder title="FAQ" />} />
+            <Route path="faq" element={<FAQ />} />
             <Route path="*" element={<Placeholder title="Page not found" />} />
           </Route>
         </Routes>

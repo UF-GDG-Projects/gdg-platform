@@ -20,10 +20,6 @@ export default function Events() {
             Meet developers, learn together, and find your next event.
           </p>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-[#dbe7dc] bg-white px-4 py-2 text-xs font-medium text-[#3c4043]">
-          <span className="h-2 w-2 rounded-full bg-[#34a853]" />
-          Live from Firestore
-        </span>
       </div>
       {isLoading && (
         <div className="rounded-2xl border border-[#e6e6e6] bg-white/80 p-8 text-center text-[#666666]">

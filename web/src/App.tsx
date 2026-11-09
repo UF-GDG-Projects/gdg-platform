@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import Events from "./pages/Events";
+import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Officers from "./pages/Officers";
 import Placeholder from "./pages/Placeholder";
@@ -13,7 +14,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="events" element={<Events />} />
-          <Route path="gallery" element={<Placeholder title="Gallery" />} />
+          <Route path="gallery" element={<Gallery />} />
           <Route path="officers" element={<Officers />} />
           <Route path="resources" element={<Resources />} />
           <Route path="faq" element={<Placeholder title="FAQ" />} />

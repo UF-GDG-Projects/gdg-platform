@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from "react-router";
 import backgroundShapes from "../assets/events-background.svg";
+import sitePattern from "../assets/site-pattern.svg";
 import Navbar from "./Navbar";
 
 export default function Layout() {
@@ -9,7 +10,14 @@ export default function Layout() {
     pathname === "/resources" ? "top-[200px]" : "top-[42px]";
 
   return (
-    <div className="relative isolate min-h-screen overflow-hidden bg-[#fafafa] font-sans text-[#2d2d2d]">
+    <div
+      className="relative isolate min-h-screen overflow-hidden bg-[#f5f5f5] font-sans text-[#2d2d2d]"
+      style={{
+        backgroundImage: `url(${sitePattern})`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "250px 233px",
+      }}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 z-0 flex justify-center overflow-hidden"
@@ -17,7 +25,7 @@ export default function Layout() {
         <img
           src={backgroundShapes}
           alt=""
-          className={`relative ${backgroundTop} w-[1440px] max-w-none shrink-0 select-none`}
+          className={`relative ${backgroundTop} w-[max(100vw,900px)] max-w-none shrink-0 select-none`}
         />
       </div>
       <Navbar />

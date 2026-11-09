@@ -17,34 +17,55 @@ export type FirestoreEvent = PlatformEvent & {
   document_id: string;
 };
 
-function toDate(value: unknown, fieldName: string): Date {
+function toDate(value: unknown): Date | null {
   if (value instanceof Timestamp) return value.toDate();
   if (value instanceof Date) return value;
-
-  throw new Error(`Event field ${fieldName} is not a Firestore timestamp.`);
+  if (typeof value === "string" || typeof value === "number") {
+    const d = new Date(value);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  return null;
 }
 
 function parseEvent(
   document: QueryDocumentSnapshot<DocumentData>,
-): FirestoreEvent {
-  const data = document.data();
-  const parsed = eventSchema.safeParse({
-    ...data,
-    created_at: toDate(data.created_at, "created_at"),
-    starts_at: toDate(data.starts_at, "starts_at"),
-    ends_at: toDate(data.ends_at, "ends_at"),
-  });
+): FirestoreEvent | null {
+  try {
+    const data = document.data();
+    const createdAt = toDate(data.created_at);
+    const startsAt = toDate(data.starts_at);
+    const endsAt = toDate(data.ends_at);
 
-  if (!parsed.success) {
-    throw new Error(
-      `Event ${document.id} does not match the shared schema: ${parsed.error.message}`,
-    );
+    if (!createdAt || !startsAt || !endsAt) {
+      console.warn(
+        `Event document ${document.id} missing or invalid timestamps, skipping.`,
+      );
+      return null;
+    }
+
+    const parsed = eventSchema.safeParse({
+      ...data,
+      created_at: createdAt,
+      starts_at: startsAt,
+      ends_at: endsAt,
+    });
+
+    if (!parsed.success) {
+      console.warn(
+        `Event document ${document.id} does not match schema, skipping:`,
+        parsed.error.issues,
+      );
+      return null;
+    }
+
+    return {
+      document_id: document.id,
+      ...parsed.data,
+    };
+  } catch (err) {
+    console.warn(`Unexpected error parsing event ${document.id}:`, err);
+    return null;
   }
-
-  return {
-    document_id: document.id,
-    ...parsed.data,
-  };
 }
 
 export function subscribeToEvents(
@@ -60,7 +81,16 @@ export function subscribeToEvents(
 
   return onSnapshot(
     eventsQuery,
-    (snapshot) => onEvents(snapshot.docs.map(parseEvent)),
+    (snapshot) => {
+      const events: FirestoreEvent[] = [];
+      for (const doc of snapshot.docs) {
+        const parsed = parseEvent(doc);
+        if (parsed) {
+          events.push(parsed);
+        }
+      }
+      onEvents(events);
+    },
     onError,
   );
 }

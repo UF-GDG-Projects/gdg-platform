@@ -17,6 +17,7 @@ export const eventSchema = z.object({
   description: z.string(),
   ends_at: firestoreDateSchema,
   event_id: z.string(),
+  image_url: z.string().optional(),
   location_name: z.string(),
   points_value: z.string(),
   starts_at: firestoreDateSchema,
@@ -33,6 +34,7 @@ export const createEventSchema = eventSchema
     title: z.string().trim().min(1, "Title is required."),
     starts_at: requestDateSchema,
     ends_at: requestDateSchema,
+    image_url: z.string().url().optional(),
   })
   .refine((event) => event.ends_at > event.starts_at, {
     message: "End time must be after start time.",
@@ -40,19 +42,35 @@ export const createEventSchema = eventSchema
   });
 
 export const profileSchema = z.object({
-  attended_ids: z.array(z.string()),
-  created_at: firestoreDateSchema,
+  attended_ids: z.array(z.string()).default([]),
+  created_at: firestoreDateSchema.optional(),
   full_name: z.string(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  ufid: z.string().optional(),
   google_email: z.string(),
-  grad_semester: z.string(),
-  major: z.string(),
-  minor: z.string(),
-  profilepicture_url: z.string(),
-  role: z.string(),
-  updated_at: firestoreDateSchema,
-  username: z.string(),
+  grad_semester: z.string().default(""),
+  major: z.string().default(""),
+  minor: z.string().default(""),
+  profilepicture_url: z.string().default(""),
+  role: z.string().default("Member"),
+  updated_at: firestoreDateSchema.optional(),
+  username: z.string().default(""),
+});
+
+export const userProfileFormSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required."),
+  lastName: z.string().trim().min(1, "Last name is required."),
+  email: z.string().email("A valid email is required."),
+  ufid: z
+    .string()
+    .regex(/^[0-9]{8}$/, "UFID must be 8 digits")
+    .optional()
+    .or(z.literal("")),
+  avatar: z.string().optional(),
 });
 
 export type Resource = z.infer<typeof resourceSchema>;
 export type Event = z.infer<typeof eventSchema>;
 export type Profile = z.infer<typeof profileSchema>;
+export type UserProfileForm = z.infer<typeof userProfileFormSchema>;

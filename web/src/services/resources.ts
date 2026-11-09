@@ -15,19 +15,26 @@ export type FirestoreResource = Resource & {
 
 function parseResource(
   document: QueryDocumentSnapshot<DocumentData>,
-): FirestoreResource {
-  const parsed = resourceSchema.safeParse(document.data());
+): FirestoreResource | null {
+  try {
+    const parsed = resourceSchema.safeParse(document.data());
 
-  if (!parsed.success) {
-    throw new Error(
-      `Resource ${document.id} does not match the shared schema: ${parsed.error.message}`,
-    );
+    if (!parsed.success) {
+      console.warn(
+        `Resource document ${document.id} does not match schema, skipping:`,
+        parsed.error.issues,
+      );
+      return null;
+    }
+
+    return {
+      document_id: document.id,
+      ...parsed.data,
+    };
+  } catch (err) {
+    console.warn(`Unexpected error parsing resource ${document.id}:`, err);
+    return null;
   }
-
-  return {
-    document_id: document.id,
-    ...parsed.data,
-  };
 }
 
 export function subscribeToResources(
@@ -36,12 +43,16 @@ export function subscribeToResources(
 ): Unsubscribe {
   return onSnapshot(
     collection(getFirebaseDb(), "resources"),
-    (snapshot) =>
-      onResources(
-        snapshot.docs
-          .map(parseResource)
-          .filter((resource) => resource.is_active),
-      ),
+    (snapshot) => {
+      const resources: FirestoreResource[] = [];
+      for (const doc of snapshot.docs) {
+        const parsed = parseResource(doc);
+        if (parsed?.is_active) {
+          resources.push(parsed);
+        }
+      }
+      onResources(resources);
+    },
     onError,
   );
 }

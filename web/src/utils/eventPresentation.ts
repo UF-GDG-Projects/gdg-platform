@@ -24,13 +24,15 @@ function eventAccent(eventId: string): GDGEvent["accent"] {
 
 export function presentEvent(event: FirestoreEvent): GDGEvent {
   const normalizedTitle = event.title.toLowerCase();
-  const imageUrl = normalizedTitle.includes("devfest")
+  const fallbackImage = normalizedTitle.includes("devfest")
     ? devfestSpeaker
     : normalizedTitle.includes("gemini")
       ? geminiWorkshop
       : normalizedTitle.includes("gear")
         ? getIntoGear
         : undefined;
+
+  const imageUrl = event.image_url || fallbackImage;
 
   return {
     id: event.document_id,

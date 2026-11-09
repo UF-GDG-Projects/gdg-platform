@@ -1,4 +1,3 @@
-/** Frontend preview shape; reconcile with the shared Firebase schema when integrated. */
 export type GDGEvent = {
   id: string;
   title: string;
@@ -8,7 +7,8 @@ export type GDGEvent = {
   description: string;
   status: "upcoming" | "past";
   accent: "blue" | "red" | "yellow" | "green";
-  /** Optional photo for the event cover. Leave undefined for a color cover. */
+  startsAt: Date;
+  endsAt: Date;
   imageUrl?: string;
   imageAlt?: string;
 };

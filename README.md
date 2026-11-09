@@ -41,13 +41,6 @@ pnpm dev
 ```
 The web app opens on http://localhost:5173 and connects to the shared Firebase project.
 
-### Run from VS Code
-
-Open the repository folder in VS Code, select **Run and Debug**, and choose
-**Launch GDG Website**. VS Code will start the development server and open the
-site automatically. You can also run the **Start GDG Website** task from the
-Command Palette.
-
 The Firebase web values are client configuration, not service-account credentials.
 Do not add private keys or Firebase Admin credentials to the frontend environment.
 

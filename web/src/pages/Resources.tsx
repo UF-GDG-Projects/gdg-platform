@@ -1,4 +1,7 @@
-type Resource = {
+import { useMemo } from "react";
+import { useResources } from "../hooks/useResources";
+
+type ResourceLink = {
   name: string;
   description: string;
   url: string;
@@ -8,10 +11,12 @@ type ResourceCategory = {
   title: string;
   subtitle: string;
   color: string;
-  resources: Resource[];
+  resources: ResourceLink[];
 };
 
-const categories: ResourceCategory[] = [
+const categoryColors = ["#4285F4", "#EA4335", "#FBBC05", "#34A853"];
+
+const curatedCategories: ResourceCategory[] = [
   {
     title: "General",
     subtitle: "Everyday tools to get started",
@@ -220,9 +225,48 @@ function ResourceCard({
 }
 
 export default function Resources() {
-  const firstRow = categories.slice(0, 3);
-  const secondRow = categories.slice(3, 6);
-  const cloudCategory = categories[6];
+  const firebaseResources = useResources();
+  const categories = useMemo(() => {
+    const merged = curatedCategories.map((category) => ({
+      ...category,
+      resources: [...category.resources],
+    }));
+
+    for (const resource of firebaseResources) {
+      let category = merged.find(
+        (item) =>
+          item.title.toLocaleLowerCase() ===
+          resource.category.toLocaleLowerCase(),
+      );
+
+      if (!category) {
+        category = {
+          title: resource.category,
+          subtitle: `More tools and learning from ${resource.provider}`,
+          color: categoryColors[merged.length % categoryColors.length],
+          resources: [],
+        };
+        merged.push(category);
+      }
+
+      const normalizedUrl = resource.url.replace(/^\((.*)\)$/, "$1");
+      const isDuplicate = category.resources.some(
+        (item) =>
+          item.url === normalizedUrl ||
+          item.name.toLocaleLowerCase() === resource.title.toLocaleLowerCase(),
+      );
+
+      if (!isDuplicate) {
+        category.resources.push({
+          name: resource.title,
+          description: resource.description,
+          url: normalizedUrl,
+        });
+      }
+    }
+
+    return merged;
+  }, [firebaseResources]);
 
   return (
     <section className="relative mx-auto w-full max-w-[1440px] px-6 pb-20 pt-[68px] sm:px-8 lg:px-[120px]">
@@ -235,23 +279,19 @@ export default function Resources() {
         </p>
       </header>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {firstRow.map((category) => (
+        {categories.map((category, index) => (
           <ResourceCard
             key={category.title}
             category={category}
-            className="min-h-[432px]"
+            className={
+              index < 3
+                ? "min-h-[432px]"
+                : index === categories.length - 1 && categories.length % 3 === 1
+                  ? "min-h-[194px] md:col-span-2 xl:col-span-3"
+                  : "min-h-[280px]"
+            }
           />
         ))}
-        {secondRow.map((category) => (
-          <ResourceCard
-            key={category.title}
-            category={category}
-            className="min-h-[280px]"
-          />
-        ))}
-        <div className="md:col-span-2 xl:col-span-3">
-          <ResourceCard category={cloudCategory} className="min-h-[194px]" />
-        </div>
       </div>
       <footer className="mt-6 text-[13px] leading-[1.4] text-[#6a6d73]">
         Curated by GDG at UF.

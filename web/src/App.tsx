@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import Events from "./pages/Events";
+import Home from "./pages/Home";
 import Placeholder from "./pages/Placeholder";
 
 export default function App() {
@@ -8,7 +9,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Placeholder title="Home" />} />
+          <Route index element={<Home />} />
           <Route path="events" element={<Events />} />
           <Route path="gallery" element={<Placeholder title="Gallery" />} />
           <Route path="officers" element={<Placeholder title="Officers" />} />

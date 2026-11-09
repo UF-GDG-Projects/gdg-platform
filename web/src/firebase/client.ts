@@ -1,5 +1,5 @@
 import { type FirebaseApp, getApp, getApps, initializeApp } from "firebase/app";
-import { type Firestore, getFirestore } from "firebase/firestore";
+import { type Firestore, getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

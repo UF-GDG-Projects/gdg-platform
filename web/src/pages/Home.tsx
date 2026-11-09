@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { demoEvents } from "../data/events";
+import { useEvents } from "../hooks/useEvents";
+import { presentEvent } from "../utils/eventPresentation";
 
 function ArrowIcon() {
   return (
@@ -110,7 +111,8 @@ function DiscordGraphic() {
 }
 
 export default function Home() {
-  const featuredEvents = demoEvents.slice(0, 3);
+  const { events, isLoading, error } = useEvents();
+  const featuredEvents = events.slice(0, 3).map(presentEvent);
 
   return (
     <>
@@ -213,38 +215,58 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {featuredEvents.map((event, index) => (
-                <Link
-                  key={event.id}
-                  to="/events"
-                  className="group flex min-h-48 flex-col justify-between rounded-[22px] border border-white/15 bg-white/[.07] p-5 text-white no-underline transition hover:-translate-y-1 hover:bg-white/[.12]"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-[#e8eaed]">
-                      {event.category}
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className="h-3 w-3 rounded-full"
-                      style={{
-                        backgroundColor: ["#4285F4", "#EA4335", "#FBBC05"][
-                          index
-                        ],
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold tracking-[-.025em]">
-                      {event.title}
-                    </h3>
-                    <p className="mt-2 text-sm text-[#bdc1c6]">
-                      {event.dateLabel} · {event.location}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            {isLoading && (
+              <div className="mt-10 rounded-[22px] border border-white/15 bg-white/[.07] p-6 text-[#bdc1c6]">
+                Loading events…
+              </div>
+            )}
+            {error && (
+              <div
+                role="alert"
+                className="mt-10 rounded-[22px] border border-[#f28b82]/50 bg-[#ea4335]/10 p-6 text-[#f6aea8]"
+              >
+                Events could not be loaded right now.
+              </div>
+            )}
+            {!isLoading && !error && featuredEvents.length === 0 && (
+              <div className="mt-10 rounded-[22px] border border-white/15 bg-white/[.07] p-6 text-[#bdc1c6]">
+                No events have been added yet.
+              </div>
+            )}
+            {!isLoading && !error && featuredEvents.length > 0 && (
+              <div className="mt-10 grid gap-4 lg:grid-cols-3">
+                {featuredEvents.map((event, index) => (
+                  <Link
+                    key={event.id}
+                    to="/events"
+                    className="group flex min-h-48 flex-col justify-between rounded-[22px] border border-white/15 bg-white/[.07] p-5 text-white no-underline transition hover:-translate-y-1 hover:bg-white/[.12]"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-[#e8eaed]">
+                        {event.category}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: ["#4285F4", "#EA4335", "#FBBC05"][
+                            index
+                          ],
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold tracking-[-.025em]">
+                        {event.title}
+                      </h3>
+                      <p className="mt-2 text-sm text-[#bdc1c6]">
+                        {event.dateLabel} · {event.location}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

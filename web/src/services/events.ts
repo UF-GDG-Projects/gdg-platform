@@ -9,7 +9,7 @@ import {
   type QueryDocumentSnapshot,
   query,
   Timestamp,
-} from "firebase/firestore";
+} from "firebase/firestore/lite";
 import { getFirebaseDb } from "../firebase/client";
 
 export type FirestoreEvent = PlatformEvent & {

@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start GDG Website",
+      "type": "shell",
+      "command": "pnpm --filter ./web dev --host 127.0.0.1 --port 5173 --strictPort",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "gdg-vite",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*VITE.*$",
+          "endsPattern": "^.*Local:.*$"
+        }
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    }
+  ]
+}

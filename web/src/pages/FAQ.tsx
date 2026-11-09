@@ -2,44 +2,29 @@ const DISCORD_INVITE = "https://discord.gg/B8hzpMvCQ";
 
 const questions = [
   {
-    question: "What is GDG on Campus at UF?",
+    question: "Do I need programming experience to join?",
     answer:
-      "GDG on Campus at UF is a student-led community for people interested in technology, design, and building. We host workshops, talks, projects, and social events throughout the year.",
+      "All skill levels are welcome, but our projects require that you be willing to learn. Our tech leads will often host workshops, share resources & advice, and provide all the help that you need to get started.",
   },
   {
-    question: "Who can join?",
+    question: "Who should I reach out to if I have questions?",
     answer:
-      "UF students from any major are welcome. Whether you are exploring tech for the first time or already building projects, there is a place for you here.",
+      "The quickest way to get in touch with the team is to reach out to an officer on discord.",
   },
   {
-    question: "Do I need technical experience?",
+    question: "How frequently do events and workshops occur?",
     answer:
-      "Not at all. Many events are designed for beginners, and our community is a great place to learn alongside other students.",
+      "Our technical leads host biweekly workshops, and we host numerous social events throughout the semester. Join our Discord to stay updated.",
   },
   {
-    question: "How do I become a member?",
+    question: "What should I bring to the workshops?",
     answer:
-      "There is no application required. Join the Discord, come to an event, and introduce yourself. That is all you need to get started.",
+      "You should bring a notebook, pen, laptop, and most importantly, a curious mind.",
   },
   {
-    question: "Where can I find upcoming events?",
+    question: "Why should I join?",
     answer:
-      "The Events page has our Google Calendar and detailed event cards. Add the calendar to your account so new events stay easy to find.",
-  },
-  {
-    question: "Are events free?",
-    answer:
-      "Most GDG events are free for students. If an event has limited space, registration, or another requirement, we will include it in the event details.",
-  },
-  {
-    question: "Can I work on a GDG project?",
-    answer:
-      "Yes. Project opportunities are shared through our community and events. The Gallery will also showcase work created by GDG members and project teams.",
-  },
-  {
-    question: "How can I contact the officer team?",
-    answer:
-      "The fastest option is the GDG Discord. Join the server and send your question in the appropriate channel so an officer can help.",
+      "Joining the UF Google Developer Group on Campus is a great way to gain experience for your CV and develop a strong project portfolio. Working on open source projects or leading a group as a tech-lead positively distinguishes you from other job applicants.",
   },
 ];
 
@@ -65,19 +50,12 @@ function PlusIcon() {
 export default function FAQ() {
   return (
     <section className="mx-auto w-full max-w-[1440px] px-6 pb-24 pt-[68px] sm:px-10 lg:px-[95px]">
-      <header className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)]">
+      <header>
         <div>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-[#4285f4]">
-            Need a hand?
-          </p>
           <h1 className="max-w-[760px] text-[clamp(3.5rem,7vw,6rem)] font-bold leading-[0.98] tracking-[-0.055em] text-[#2d2d2d]">
             Frequently asked questions
           </h1>
         </div>
-        <p className="max-w-[500px] pb-2 text-lg leading-8 text-[#686868]">
-          Everything you need to know before joining the GDG community at the
-          University of Florida.
-        </p>
       </header>
 
       <div className="mt-14 overflow-hidden rounded-[22px] border border-[#e2e2e2] bg-white shadow-[0_8px_30px_rgba(0,0,0,.06)]">

@@ -3,9 +3,10 @@ import { resourceSchema } from "@shared/schemas";
 import {
   collection,
   type DocumentData,
-  getDocs,
+  onSnapshot,
   type QueryDocumentSnapshot,
-} from "firebase/firestore/lite";
+  type Unsubscribe,
+} from "firebase/firestore";
 import { getFirebaseDb } from "../firebase/client";
 
 export type FirestoreResource = Resource & {
@@ -29,10 +30,18 @@ function parseResource(
   };
 }
 
-export async function listResources(): Promise<FirestoreResource[]> {
-  const snapshot = await getDocs(collection(getFirebaseDb(), "resources"));
-
-  return snapshot.docs
-    .map(parseResource)
-    .filter((resource) => resource.is_active);
+export function subscribeToResources(
+  onResources: (resources: FirestoreResource[]) => void,
+  onError: (error: Error) => void,
+): Unsubscribe {
+  return onSnapshot(
+    collection(getFirebaseDb(), "resources"),
+    (snapshot) =>
+      onResources(
+        snapshot.docs
+          .map(parseResource)
+          .filter((resource) => resource.is_active),
+      ),
+    onError,
+  );
 }

@@ -25,7 +25,7 @@ export default function Layout() {
         <img
           src={backgroundShapes}
           alt=""
-          className={`relative ${backgroundTop} w-[max(100vw,900px)] max-w-none shrink-0 select-none`}
+          className={`relative ${backgroundTop} w-[max(100vw,900px)] max-w-none shrink-0 select-none drop-shadow-[0_7px_6px_rgba(45,45,45,0.16)]`}
         />
       </div>
       <Navbar />

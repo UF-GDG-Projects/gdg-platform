@@ -3,13 +3,14 @@ import { eventSchema } from "@shared/schemas";
 import {
   collection,
   type DocumentData,
-  getDocs,
   limit,
+  onSnapshot,
   orderBy,
   type QueryDocumentSnapshot,
   query,
   Timestamp,
-} from "firebase/firestore/lite";
+  type Unsubscribe,
+} from "firebase/firestore";
 import { getFirebaseDb } from "../firebase/client";
 
 export type FirestoreEvent = PlatformEvent & {
@@ -46,13 +47,20 @@ function parseEvent(
   };
 }
 
-export async function listEvents(maxResults = 50): Promise<FirestoreEvent[]> {
+export function subscribeToEvents(
+  onEvents: (events: FirestoreEvent[]) => void,
+  onError: (error: Error) => void,
+  maxResults = 50,
+): Unsubscribe {
   const eventsQuery = query(
     collection(getFirebaseDb(), "events"),
     orderBy("starts_at", "asc"),
     limit(maxResults),
   );
-  const snapshot = await getDocs(eventsQuery);
 
-  return snapshot.docs.map(parseEvent);
+  return onSnapshot(
+    eventsQuery,
+    (snapshot) => onEvents(snapshot.docs.map(parseEvent)),
+    onError,
+  );
 }

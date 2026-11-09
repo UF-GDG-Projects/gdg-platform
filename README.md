@@ -33,8 +33,10 @@ pnpm install
 
 ### Run locally
 
+Make sure to copy `web/.env.example` to `web/.env` before running:
+
 ```bash
-cp web/.env.example web/.env.local
+cp web/.env.example web/.env
 pnpm dev
 ```
 The web app opens on http://localhost:5173 and connects to the shared Firebase project.

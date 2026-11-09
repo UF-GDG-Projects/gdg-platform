@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router";
+import demoAvatar from "../assets/auth/avatar.png";
 import gdgLogo from "../assets/gdg-logo.svg";
+import { useDemoAccount } from "../demo/DemoAccount";
 
 const links = [
   { label: "Home", to: "/" },
@@ -118,6 +120,7 @@ function ProfileIcon() {
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { profile } = useDemoAccount();
   return (
     <header className="gdg-header">
       <style>{styles}</style>
@@ -166,9 +169,38 @@ export default function Navbar() {
             <DiscordIcon />
           </a>
         </div>
-        <div className="gdg-auth" title="Authentication not implemented yet">
-          <span>Log In&nbsp; | &nbsp;Sign Up</span>
-          <ProfileIcon />
+        <div className="gdg-auth">
+          {profile ? (
+            <NavLink
+              to="/profile"
+              className="flex min-w-0 items-center gap-2"
+              aria-label="Open demo profile"
+            >
+              <span className="truncate">
+                {profile.firstName} {profile.lastName}
+              </span>
+              <img
+                src={profile.avatar || demoAvatar}
+                width="31"
+                height="31"
+                className="rounded-full shrink-0"
+                alt=""
+              />
+            </NavLink>
+          ) : (
+            <>
+              <span>
+                <NavLink to="/login" className="hover:text-[#4285f4]">
+                  Log In
+                </NavLink>
+                &nbsp; | &nbsp;
+                <NavLink to="/signup" className="hover:text-[#4285f4]">
+                  Sign Up
+                </NavLink>
+              </span>
+              <ProfileIcon />
+            </>
+          )}
         </div>
         <button
           type="button"
@@ -199,9 +231,32 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
-          <div className="gdg-mobile-note">
-            Instagram and sign-in coming soon
-          </div>
+          {profile ? (
+            <NavLink
+              to="/profile"
+              className="gdg-mobile-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              My Profile (demo)
+            </NavLink>
+          ) : (
+            <>
+              <NavLink
+                to="/login"
+                className="gdg-mobile-link"
+                onClick={() => setMenuOpen(false)}
+              >
+                Log In
+              </NavLink>
+              <NavLink
+                to="/signup"
+                className="gdg-mobile-link"
+                onClick={() => setMenuOpen(false)}
+              >
+                Sign Up
+              </NavLink>
+            </>
+          )}
         </nav>
       )}
     </header>

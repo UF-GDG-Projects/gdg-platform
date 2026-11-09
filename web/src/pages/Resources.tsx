@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useResources } from "../hooks/useResources";
 
-type ResourceLink = {
+type Resource = {
   name: string;
   description: string;
   url: string;
@@ -11,7 +11,7 @@ type ResourceCategory = {
   title: string;
   subtitle: string;
   color: string;
-  resources: ResourceLink[];
+  resources: Resource[];
 };
 
 const categoryColors = ["#4285F4", "#EA4335", "#FBBC05", "#34A853"];
@@ -184,7 +184,7 @@ function ResourceCard({
       className={`rounded-2xl border border-[#e7e7e7] bg-white p-6 ${className}`}
       aria-label={`${category.title} resources`}
     >
-      <h2 className="flex items-center gap-3 text-[23px] font-bold leading-[1.4] text-[#202124]">
+      <h2 className="flex items-center gap-3 text-[23px] leading-[1.4] font-bold text-[#202124]">
         <span
           className="h-[10px] w-[10px] shrink-0 rounded-full"
           style={{ backgroundColor: category.color }}
@@ -195,6 +195,7 @@ function ResourceCard({
       <p className="mt-2 text-[13px] leading-[1.4] text-[#6a6d73]">
         {category.subtitle}
       </p>
+
       <ul className="mt-4 space-y-3">
         {category.resources.map((resource) => (
           <li key={resource.url} className="min-h-[54px]">
@@ -206,7 +207,7 @@ function ResourceCard({
               aria-label={`${resource.name} (opens in a new tab)`}
             >
               <span className="min-w-0">
-                <span className="block text-[15px] font-medium leading-[1.4] text-[#1a73e8] group-hover:underline">
+                <span className="block text-[15px] leading-[1.4] font-medium text-[#1a73e8] group-hover:underline">
                   {resource.name}
                 </span>
                 <span className="mt-[3px] block text-[12px] leading-[1.4] text-[#6a6d73]">
@@ -271,13 +272,14 @@ export default function Resources() {
   return (
     <section className="relative mx-auto w-full max-w-[1440px] px-6 pb-20 pt-[68px] sm:px-8 lg:px-[120px]">
       <header className="mb-6">
-        <h1 className="text-[clamp(44px,5vw,64px)] font-bold leading-[1.4] tracking-[-0.035em] text-[#202124]">
+        <h1 className="text-[clamp(44px,5vw,64px)] leading-[1.4] font-bold tracking-[-0.035em] text-[#202124]">
           Resources
         </h1>
         <p className="mt-1 text-[18px] leading-[1.4] text-[#6a6d73]">
           Helpful tools, tutorials, and student offers.
         </p>
       </header>
+
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {categories.map((category, index) => (
           <ResourceCard
@@ -293,6 +295,7 @@ export default function Resources() {
           />
         ))}
       </div>
+
       <footer className="mt-6 text-[13px] leading-[1.4] text-[#6a6d73]">
         Curated by GDG at UF.
       </footer>

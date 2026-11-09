@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import EventCalendar from "../components/EventCalendar";
 import EventCard from "../components/EventCard";
 import { useEvents } from "../hooks/useEvents";
 import type { GDGEvent } from "../types/events";
 import { presentEvent } from "../utils/eventPresentation";
+
+const GOOGLE_CALENDAR_URL =
+  "https://calendar.google.com/calendar/u/0?cid=Z2Rnb25jYW1wdXN1ZkBnbWFpbC5jb20";
+const GOOGLE_CALENDAR_EMBED_URL =
+  "https://calendar.google.com/calendar/embed?src=gdgoncampusuf%40gmail.com&ctz=America%2FNew_York";
 
 function EventDialog({
   event,
@@ -92,22 +96,29 @@ export default function Events() {
         <h1 className="text-4xl font-bold tracking-[-.035em] text-[#2d2d2d] sm:text-5xl">
           Calendar
         </h1>
-        <p className="mt-1 text-base text-[#767676] sm:text-xl">
-          Events are added and updated by the GDG team.
-        </p>
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-base text-[#767676] sm:text-xl">
+            Keep up with GDG meetings, workshops, and events.
+          </p>
+          <a
+            href={GOOGLE_CALENDAR_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-10 items-center rounded-full bg-[#4385f3] px-5 text-sm font-semibold text-white no-underline shadow-sm transition hover:-translate-y-0.5 hover:bg-[#3275e5]"
+          >
+            Add to Google Calendar
+          </a>
+        </div>
 
         <div className="mt-4">
-          {isLoading ? (
-            <div className="flex min-h-[410px] items-center justify-center rounded-[20px] border border-[#c2c2c2] bg-[#f0f4f9] text-[#767676]">
-              Loading events…
-            </div>
-          ) : error ? (
-            <div className="flex min-h-[410px] items-center justify-center rounded-[20px] border border-[#f2c8c4] bg-[#fce8e6] p-8 text-center text-[#8c1d18]">
-              Events could not be loaded: {error}
-            </div>
-          ) : (
-            <EventCalendar events={events} />
-          )}
+          <div className="overflow-hidden rounded-[20px] border border-[#c2c2c2] bg-white shadow-sm">
+            <iframe
+              src={GOOGLE_CALENDAR_EMBED_URL}
+              title="GDG on Campus UF Google Calendar"
+              className="h-[470px] w-full border-0"
+              loading="lazy"
+            />
+          </div>
         </div>
 
         <h2 className="mt-5 text-4xl font-bold tracking-[-.035em] text-[#2d2d2d] sm:text-5xl">

@@ -4,6 +4,7 @@ import Events from "./pages/Events";
 import Home from "./pages/Home";
 import Officers from "./pages/Officers";
 import Placeholder from "./pages/Placeholder";
+import Resources from "./pages/Resources";
 
 export default function App() {
   return (
@@ -14,7 +15,7 @@ export default function App() {
           <Route path="events" element={<Events />} />
           <Route path="gallery" element={<Placeholder title="Gallery" />} />
           <Route path="officers" element={<Officers />} />
-          <Route path="resources" element={<Placeholder title="Resources" />} />
+          <Route path="resources" element={<Resources />} />
           <Route path="faq" element={<Placeholder title="FAQ" />} />
           <Route path="*" element={<Placeholder title="Page not found" />} />
         </Route>

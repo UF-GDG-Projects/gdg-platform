@@ -7,44 +7,43 @@ const coverColors: Record<GDGEvent["accent"], string> = {
   green: "bg-[#d9f2df]",
 };
 
-/** Figma-inspired event tile: photo/cover, top time & place, bottom title. */
-export default function EventCard({ event }: { event: GDGEvent }) {
+type EventCardProps = {
+  event: GDGEvent;
+  onSelect: (event: GDGEvent) => void;
+};
+
+export default function EventCard({ event, onSelect }: EventCardProps) {
   return (
-    <article className="group relative min-w-0 pb-[11px] pr-[11px]">
-      {/* Offset backing panel visible on right and bottom, like the Figma mockup. */}
+    <button
+      type="button"
+      onClick={() => onSelect(event)}
+      className="group w-full rounded-[18px] border border-[#cfcfcfb3] bg-white p-[14px] text-left shadow-[0_1px_2px_rgba(0,0,0,.25)] transition hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(45,45,45,.15)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4385f3]"
+    >
       <div
-        aria-hidden="true"
-        className="absolute inset-x-[11px] bottom-0 right-0 top-[11px] bg-[#d9d9d9]"
-      />
-
-      <div className="relative flex min-h-[363px] flex-col border border-[#ededed] bg-white p-[13px] transition-transform duration-200 group-hover:-translate-y-0.5">
-        {/* Photo / color cover: use an image URL once real event photos exist. */}
-        <div
-          className={`relative min-h-[255px] flex-1 overflow-hidden ${coverColors[event.accent]}`}
-        >
-          {event.imageUrl ? (
-            <img
-              src={event.imageUrl}
-              alt={event.imageAlt || `${event.title} event cover`}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : null}
-
-          {/* Small outlined label near top: event time and location. */}
-          <div className="absolute left-3 right-3 top-3 inline-flex w-fit max-w-[calc(100%-1.5rem)] flex-wrap gap-x-1.5 gap-y-0.5 border border-[#bdbdbd] bg-white/90 px-3 py-2 text-xs font-medium text-[#353535]">
-            <span>{event.dateLabel}</span>
-            <span aria-hidden="true">·</span>
-            <span>{event.location}</span>
-          </div>
-        </div>
-
-        {/* Small distinct bottom block: event name. */}
-        <div className="mt-[13px] flex min-h-[66px] items-center bg-[#f2f2f2] px-4 py-3">
-          <h2 className="text-base font-semibold leading-snug text-[#292929]">
+        className={`relative aspect-[.8] overflow-hidden rounded-[13px] shadow-[0_1px_2px_rgba(0,0,0,.2)] ${coverColors[event.accent]}`}
+      >
+        {event.imageUrl ? (
+          <img
+            src={event.imageUrl}
+            alt={event.imageAlt || `${event.title} event cover`}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center p-8 text-center text-3xl font-semibold text-[#2d2d2d]">
             {event.title}
-          </h2>
-        </div>
+          </div>
+        )}
       </div>
-    </article>
+      <div className="mt-4 min-h-[61px] rounded-[13px] border border-[#c2c2c2] bg-[#f4f4f4] px-3 py-2">
+        <h2 className="font-mono text-sm font-medium leading-5 text-[#4385f3]">
+          {event.title}
+        </h2>
+        <p className="mt-0.5 text-[11px] leading-[1.3] text-[#767676]">
+          {event.dateLabel}
+          <br />
+          {event.location}
+        </p>
+      </div>
+    </button>
   );
 }

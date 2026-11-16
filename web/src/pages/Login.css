@@ -64,6 +64,10 @@
   background: #f8faff;
   border-color: #a5bce3;
 }
+.auth-google:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
 .auth-google:focus-visible,
 .auth-tabs a:focus-visible {
   outline: 2px solid #1a73e8;
@@ -91,4 +95,27 @@
 .auth-panel-signup {
   background-image: url("../assets/auth/signup-tab.svg");
   transform: scaleX(-1);
+}
+
+html[data-theme="dark"] .auth-panel {
+  background: #303134;
+}
+html[data-theme="dark"] .auth-panel-surface {
+  filter: brightness(0.46) contrast(1.1);
+}
+html[data-theme="dark"] .auth-tabs a,
+html[data-theme="dark"] .auth-notice {
+  color: #bdc1c6;
+}
+html[data-theme="dark"] .auth-tabs a.active {
+  color: #f1f3f4;
+}
+html[data-theme="dark"] .auth-google {
+  border-color: #5f6368;
+  background: #202124;
+  color: #f1f3f4;
+}
+html[data-theme="dark"] .auth-google:hover {
+  background: #292a2d;
+  border-color: #8ab4f8;
 }

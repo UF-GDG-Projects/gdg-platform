@@ -1,132 +1,107 @@
-import { type FormEvent, useState } from "react";
-import { Navigate } from "react-router";
-import { useDemoAccount } from "../demo/DemoAccount";
-import { saveMemberProfile } from "../firebase/auth";
+import { type FormEvent, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router";
+import { useAccount } from "../auth/AccountContext";
 import "./Account.css";
 
 export default function PersonalInformation() {
-  const { user, profile, loading, error } = useDemoAccount();
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [ufid, setUfid] = useState("");
+  const { user, profile, saveProfile, isLoading } = useAccount();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (!profile) return;
+    setFirstName(profile.firstName);
+    setLastName(profile.lastName);
+    setUfid(profile.ufid);
+  }, [profile]);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!user || saving) return;
-
-    const first = firstName.trim();
-    const last = lastName.trim();
-
-    if (!first || !last) {
-      setMessage("Please enter your first and last name.");
-      return;
-    }
-
-    setSaving(true);
+    if (!firstName.trim() || !lastName.trim() || isSubmitting) return;
+    setIsSubmitting(true);
     setMessage("");
-
     try {
-      await saveMemberProfile(user, first, last);
-
-      // The account provider listens to Firestore.
-      // Once the profile appears, this component
-      // automatically redirects to /profile.
-      setMessage("Profile created! Loading your account...");
-    } catch (err) {
-      console.error("Failed to create profile:", err);
-
+      await saveProfile({
+        ...(profile || {
+          email: user?.email || "",
+          ufid: "",
+        }),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        ufid,
+        email: user?.email || profile?.email || "",
+        avatar: profile?.avatar || user?.photoURL || undefined,
+      });
+      navigate("/profile");
+    } catch (reason) {
       setMessage(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong while creating your profile.",
+        reason instanceof Error ? reason.message : "Unable to save profile.",
       );
-
-      setSaving(false);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
-  // Wait until Firebase has checked the user's session.
-  if (loading) {
-    return (
-      <section className="personal-page">
-        <p role="status">Loading your account...</p>
-      </section>
-    );
-  }
-
-  // Show Firestore or authentication errors.
-  if (error) {
-    return (
-      <section className="personal-page">
-        <p role="alert">Unable to load account: {error}</p>
-      </section>
-    );
-  }
-
-  // Only authenticated users can complete signup.
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Existing users skip signup and go to their profile.
-  if (profile) {
-    return <Navigate to="/profile" replace />;
-  }
+  if (isLoading) return <p className="account-loading">Loading account…</p>;
+  if (!user) return <Navigate to="/signup" replace />;
 
   return (
     <section className="personal-page">
       <div className="personal-panel">
-        <form onSubmit={handleSubmit} className="personal-form">
+        <form onSubmit={submit} className="personal-form">
           <h1>Personal Information</h1>
-
-          <p className="account-status">Signed in as {user.email}</p>
-
           <div className="account-names">
             <label>
-              First Name
-              <span className="required">*</span>
+              First Name <span className="required">*</span>
               <input
                 required
                 autoComplete="given-name"
                 value={firstName}
                 maxLength={60}
-                disabled={saving}
-                onChange={(event) => setFirstName(event.target.value)}
+                onChange={(e) => setFirstName(e.target.value)}
               />
             </label>
-
             <label>
-              Last Name
-              <span className="required">*</span>
+              Last Name <span className="required">*</span>
               <input
                 required
                 autoComplete="family-name"
                 value={lastName}
                 maxLength={60}
-                disabled={saving}
-                onChange={(event) => setLastName(event.target.value)}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </label>
           </div>
-
+          <label>
+            UFID
+            <input
+              inputMode="numeric"
+              pattern="[0-9]{8}"
+              maxLength={8}
+              title="Enter 8 digits or leave this optional field blank"
+              value={ufid}
+              onChange={(e) => setUfid(e.target.value)}
+            />
+          </label>
           <button
             type="submit"
             className="account-primary signup-submit"
-            disabled={saving || !firstName.trim() || !lastName.trim()}
+            disabled={isSubmitting || !firstName.trim() || !lastName.trim()}
           >
-            {saving ? "Creating Account..." : "Sign Up"}
+            {isSubmitting ? "Creating Account…" : "Sign Up"}
           </button>
-
-          {message && (
-            <p className="account-status" role="status">
-              {message}
-            </p>
-          )}
         </form>
       </div>
+      <p className="account-status" role="status">
+        {message || `Signed in as ${user.email || "your Google account"}.`}
+      </p>
+      <Link to="/signup" className="demo-back">
+        Back to Sign Up
+      </Link>
     </section>
   );
 }

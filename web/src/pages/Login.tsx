@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import googleLogo from "../assets/auth/google.png";
-import { signInWithGoogle } from "../firebase/auth";
+import { useAccount } from "../auth/AccountContext";
 import "./Login.css";
 
 export default function Login({
@@ -9,25 +9,24 @@ export default function Login({
 }: {
   mode?: "login" | "signup";
 }) {
-  const signup = mode === "signup";
+  const { signInWithGoogle, error: accountError } = useAccount();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const signup = mode === "signup";
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleGoogleSignIn() {
-    setLoading(true);
+  async function continueWithGoogle() {
+    setIsSubmitting(true);
     setMessage("");
-
     try {
-      const { hasProfile } = await signInWithGoogle();
-
-      navigate(hasProfile ? "/profile" : "/signup/personal", { replace: true });
-    } catch (error) {
+      await signInWithGoogle();
+      navigate(signup ? "/signup/personal" : "/profile");
+    } catch (reason) {
       setMessage(
-        error instanceof Error ? error.message : "Google sign-in failed.",
+        reason instanceof Error ? reason.message : "Unable to sign in.",
       );
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -38,31 +37,28 @@ export default function Login({
           className={`auth-panel-surface${signup ? " auth-panel-signup" : ""}`}
           aria-hidden="true"
         />
-
         <nav className="auth-tabs" aria-label="Account access">
           <NavLink to="/login">Log In</NavLink>
           <NavLink to="/signup">Sign Up</NavLink>
         </nav>
-
         <button
           className="auth-google"
           type="button"
-          disabled={loading}
-          onClick={handleGoogleSignIn}
+          disabled={isSubmitting}
+          onClick={continueWithGoogle}
         >
           <img src={googleLogo} width="24" height="24" alt="" />
-          {loading
-            ? "Connecting to Google..."
+          {isSubmitting
+            ? "Opening Google…"
             : signup
               ? "Sign Up with Google"
               : "Login with Google"}
         </button>
-
-        {message && (
-          <p className="auth-notice" role="alert">
-            {message}
-          </p>
-        )}
+        <p className="auth-notice" role="status">
+          {message ||
+            accountError ||
+            "Secure sign-in with Google and Firebase."}
+        </p>
       </div>
     </section>
   );

@@ -3,10 +3,12 @@ import loginShapes from "../assets/auth/login-shapes.svg";
 import signupShapes from "../assets/auth/signup-shapes.svg";
 import backgroundShapes from "../assets/events-background.svg";
 import sitePattern from "../assets/site-pattern.svg";
+import { useAccount } from "../auth/AccountContext";
 import Navbar from "./Navbar";
 
 export default function Layout() {
   const { pathname } = useLocation();
+  const { settings } = useAccount();
   const isAuth =
     pathname === "/login" ||
     pathname.startsWith("/signup") ||
@@ -17,7 +19,7 @@ export default function Layout() {
 
   return (
     <div
-      className="relative isolate min-h-screen overflow-hidden bg-[#f5f5f5] font-sans text-[#2d2d2d]"
+      className={`site-shell relative isolate min-h-screen overflow-hidden bg-[#f5f5f5] font-sans text-[#2d2d2d]${settings.dark ? " theme-dark" : ""}`}
       style={
         isAuth
           ? undefined
@@ -31,7 +33,7 @@ export default function Layout() {
       {isAuth ? (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden bg-[#f4f4f4]"
+          className="site-auth-background pointer-events-none absolute inset-0 overflow-hidden bg-[#f4f4f4]"
         >
           <img
             src={pathname !== "/login" ? signupShapes : loginShapes}

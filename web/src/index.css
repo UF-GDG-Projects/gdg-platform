@@ -3,3 +3,146 @@
 @theme {
   --font-sans: "Google Sans Flex", Arial, sans-serif;
 }
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f5f5f5;
+}
+
+.site-shell {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] .site-shell,
+html[data-theme="dark"] .site-auth-background {
+  background-color: #111318;
+  color: #f1f3f4;
+}
+
+html[data-theme="dark"] .site-shell [class~="bg-white"],
+html[data-theme="dark"] .site-shell [class*="bg-white/"],
+html[data-theme="dark"] .site-shell [class*="bg-[#f4f4f4]"],
+html[data-theme="dark"] .site-shell [class*="bg-[#f1f3f4]"],
+html[data-theme="dark"] .site-shell [class*="bg-[#efefef]"],
+html[data-theme="dark"] .site-shell [class*="bg-[#f0f1f2]"] {
+  background-color: #202124;
+}
+
+html[data-theme="dark"] .site-shell [class*="text-[#2d2d2d]"],
+html[data-theme="dark"] .site-shell [class*="text-[#202124]"],
+html[data-theme="dark"] .site-shell [class~="text-black"] {
+  color: #f1f3f4;
+}
+
+html[data-theme="dark"] .site-shell [class*="text-[#767676]"],
+html[data-theme="dark"] .site-shell [class*="text-[#777777]"],
+html[data-theme="dark"] .site-shell [class*="text-[#6a6d73]"],
+html[data-theme="dark"] .site-shell [class*="text-[#686868]"],
+html[data-theme="dark"] .site-shell [class*="text-[#c2c2c2]"] {
+  color: #bdc1c6;
+}
+
+html[data-theme="dark"] .site-shell [class*="border-[#"] {
+  border-color: #4b4f52;
+}
+
+html[data-theme="dark"] .gdg-nav-pill,
+html[data-theme="dark"] .gdg-mobile-panel,
+html[data-theme="dark"] .gdg-mobile-toggle {
+  background: #202124;
+  border-color: #4b4f52;
+}
+
+html[data-theme="dark"] .gdg-main-link,
+html[data-theme="dark"] .gdg-mobile-link,
+html[data-theme="dark"] .gdg-mobile-toggle,
+html[data-theme="dark"] .gdg-auth {
+  color: #e8eaed;
+}
+
+html[data-theme="dark"] .gdg-main-link:hover,
+html[data-theme="dark"] .gdg-main-link.active,
+html[data-theme="dark"] .gdg-mobile-link.active {
+  color: #8ab4f8;
+}
+
+html[data-theme="dark"] iframe[title*="Google Calendar"] {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+.event-pop-card {
+  transform: translateY(0) scale(1);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.event-pop-image {
+  transition: transform 280ms ease;
+}
+
+.event-pop-title {
+  transition:
+    transform 180ms ease,
+    color 180ms ease;
+}
+
+.event-pop-card:hover,
+.event-pop-card:focus-visible {
+  z-index: 2;
+  transform: translateY(-10px) scale(1.025);
+  border-color: rgb(66 133 244 / 52%);
+  box-shadow: 0 20px 38px rgb(45 45 45 / 20%);
+}
+
+.event-pop-card:hover .event-pop-image,
+.event-pop-card:focus-visible .event-pop-image {
+  transform: scale(1.045);
+}
+
+.event-pop-card:hover .event-pop-title,
+.event-pop-card:focus-visible .event-pop-title {
+  transform: translateX(3px);
+  color: #1a73e8;
+}
+
+html[data-theme="dark"] .event-pop-card:hover,
+html[data-theme="dark"] .event-pop-card:focus-visible {
+  border-color: #8ab4f8;
+  box-shadow: 0 20px 38px rgb(0 0 0 / 50%);
+}
+
+html[data-theme="dark"] .event-pop-card:hover .event-pop-title,
+html[data-theme="dark"] .event-pop-card:focus-visible .event-pop-title {
+  color: #8ab4f8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-pop-card,
+  .event-pop-image,
+  .event-pop-title {
+    transition: none;
+  }
+  .event-pop-card:hover,
+  .event-pop-card:focus-visible {
+    transform: translateY(-4px);
+  }
+}

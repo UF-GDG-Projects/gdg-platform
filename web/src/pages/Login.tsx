@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import googleLogo from "../assets/auth/google.png";
-import { useDemoAccount } from "../demo/DemoAccount";
+import { useAccount } from "../auth/AccountContext";
 import "./Login.css";
 
 export default function Login({
@@ -8,9 +9,27 @@ export default function Login({
 }: {
   mode?: "login" | "signup";
 }) {
-  const { signIn } = useDemoAccount();
+  const { signInWithGoogle, error: accountError } = useAccount();
   const navigate = useNavigate();
   const signup = mode === "signup";
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function continueWithGoogle() {
+    setIsSubmitting(true);
+    setMessage("");
+    try {
+      await signInWithGoogle();
+      navigate(signup ? "/signup/personal" : "/profile");
+    } catch (reason) {
+      setMessage(
+        reason instanceof Error ? reason.message : "Unable to sign in.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <section className="auth-page" aria-label={signup ? "Sign up" : "Log in"}>
       <div className="auth-panel">
@@ -25,19 +44,20 @@ export default function Login({
         <button
           className="auth-google"
           type="button"
-          onClick={() => {
-            if (signup) navigate("/signup/personal");
-            else {
-              signIn();
-              navigate("/profile");
-            }
-          }}
+          disabled={isSubmitting}
+          onClick={continueWithGoogle}
         >
           <img src={googleLogo} width="24" height="24" alt="" />
-          {signup ? "Sign Up with Google" : "Login with Google"}
+          {isSubmitting
+            ? "Opening Google…"
+            : signup
+              ? "Sign Up with Google"
+              : "Login with Google"}
         </button>
-        <p className="auth-notice">
-          Demo preview · Continue without a Google account.
+        <p className="auth-notice" role="status">
+          {message ||
+            accountError ||
+            "Secure sign-in with Google and Firebase."}
         </p>
       </div>
     </section>

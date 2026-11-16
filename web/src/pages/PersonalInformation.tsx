@@ -1,25 +1,50 @@
-import { type FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { useDemoAccount } from "../demo/DemoAccount";
+import { type FormEvent, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router";
+import { useAccount } from "../auth/AccountContext";
 import "./Account.css";
 
 export default function PersonalInformation() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [ufid, setUfid] = useState("");
-  const { saveProfile } = useDemoAccount();
+  const { user, profile, saveProfile, isLoading } = useAccount();
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  function submit(event: FormEvent<HTMLFormElement>) {
+
+  useEffect(() => {
+    if (!profile) return;
+    setFirstName(profile.firstName);
+    setLastName(profile.lastName);
+    setUfid(profile.ufid);
+  }, [profile]);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!firstName.trim() || !lastName.trim()) return;
-    saveProfile({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      ufid,
-      email: "demo@example.com",
-    });
-    navigate("/profile");
+    setMessage("");
+    try {
+      await saveProfile({
+        ...(profile || {
+          email: user?.email || "",
+          ufid: "",
+        }),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        ufid,
+        email: user?.email || profile?.email || "",
+        avatar: profile?.avatar || user?.photoURL || undefined,
+      });
+      navigate("/profile");
+    } catch (reason) {
+      setMessage(
+        reason instanceof Error ? reason.message : "Unable to save profile.",
+      );
+    }
   }
+
+  if (isLoading) return <p className="account-loading">Loading account…</p>;
+  if (!user) return <Navigate to="/signup" replace />;
+
   return (
     <section className="personal-page">
       <div className="personal-panel">
@@ -67,9 +92,8 @@ export default function PersonalInformation() {
           </button>
         </form>
       </div>
-      <p className="demo-caption">
-        Demo only · Use sample information. Nothing is sent or saved after
-        refresh.
+      <p className="account-status" role="status">
+        {message || `Signed in as ${user.email || "your Google account"}.`}
       </p>
       <Link to="/signup" className="demo-back">
         Back to Sign Up

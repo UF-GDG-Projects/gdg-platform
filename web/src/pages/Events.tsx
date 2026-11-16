@@ -128,6 +128,16 @@ export default function Events() {
           We have something fun for everyone
         </p>
 
+        {isLoading && (
+          <div className="mt-5 rounded-[18px] border border-[#d8d8d8] bg-white p-8 text-center text-[#767676]">
+            Loading upcoming events…
+          </div>
+        )}
+        {!isLoading && error && (
+          <div className="mt-5 rounded-[18px] border border-[#f2b8b5] bg-white p-8 text-center text-[#b3261e]">
+            Events could not be loaded right now. Please try again soon.
+          </div>
+        )}
         {!isLoading && !error && displayEvents.length === 0 && (
           <div className="mt-5 rounded-[18px] border border-[#d8d8d8] bg-white p-8 text-center text-[#767676]">
             No events have been added yet.

@@ -6,10 +6,10 @@ import editIcon from "../assets/auth/edit.svg";
 import logoutIcon from "../assets/auth/logout.svg";
 import profileIcon from "../assets/auth/profile.svg";
 import settingsIcon from "../assets/auth/settings.svg";
-import { type DemoProfile, useDemoAccount } from "../demo/DemoAccount";
+import { type AccountProfile, useAccount } from "../auth/AccountContext";
 import "./Account.css";
 
-function Identity({ person }: { person: DemoProfile }) {
+function Identity({ person }: { person: AccountProfile }) {
   return (
     <div className="account-identity">
       <img src={person.avatar || avatar} alt="" width="58" height="58" />
@@ -22,22 +22,28 @@ function Identity({ person }: { person: DemoProfile }) {
     </div>
   );
 }
-function ProfileForm({ person }: { person: DemoProfile }) {
-  const { saveProfile } = useDemoAccount();
+function ProfileForm({ person }: { person: AccountProfile }) {
+  const { saveProfile } = useAccount();
   const [draft, setDraft] = useState(person);
   const [message, setMessage] = useState("");
-  function submit(e: FormEvent<HTMLFormElement>) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!draft.firstName.trim() || !draft.lastName.trim()) {
       setMessage("Please enter a first and last name.");
       return;
     }
-    saveProfile({
-      ...draft,
-      firstName: draft.firstName.trim(),
-      lastName: draft.lastName.trim(),
-    });
-    setMessage("Profile saved for this demo.");
+    try {
+      await saveProfile({
+        ...draft,
+        firstName: draft.firstName.trim(),
+        lastName: draft.lastName.trim(),
+      });
+      setMessage("Profile saved to Firebase.");
+    } catch (reason) {
+      setMessage(
+        reason instanceof Error ? reason.message : "Unable to save profile.",
+      );
+    }
   }
   function photo(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -52,7 +58,7 @@ function ProfileForm({ person }: { person: DemoProfile }) {
     const reader = new FileReader();
     reader.onload = () => {
       setDraft((d) => ({ ...d, avatar: String(reader.result) }));
-      setMessage("Photo selected. Save Changes to keep it in this demo.");
+      setMessage("Photo selected. Save Changes to keep it.");
     };
     reader.readAsDataURL(file);
   }
@@ -118,7 +124,7 @@ function ProfileForm({ person }: { person: DemoProfile }) {
   );
 }
 function Settings() {
-  const { settings, saveSettings } = useDemoAccount();
+  const { settings, saveSettings } = useAccount();
   const [draft, setDraft] = useState(settings);
   const [message, setMessage] = useState("");
   function toggle(
@@ -185,12 +191,18 @@ function Settings() {
   return (
     <form
       className={`settings-form${draft.dark ? " settings-preview-dark" : ""}`}
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        saveSettings(draft);
-        setMessage(
-          "Settings saved for this demo. No notifications will be sent.",
-        );
+        try {
+          await saveSettings(draft);
+          setMessage("Settings saved. Your theme now applies to every page.");
+        } catch (reason) {
+          setMessage(
+            reason instanceof Error
+              ? reason.message
+              : "Unable to save settings.",
+          );
+        }
       }}
     >
       <h1 className="sr-only">Settings</h1>
@@ -220,15 +232,13 @@ export default function Profile({
 }: {
   settingsPage?: boolean;
 }) {
-  const { profile, settings, logOut } = useDemoAccount();
+  const { profile, logOut, isLoading } = useAccount();
   const navigate = useNavigate();
+  if (isLoading) return <p className="account-loading">Loading account…</p>;
   if (!profile) return <Navigate to="/login" replace />;
   return (
-    <section className={`account-page${settings.dark ? " account-dark" : ""}`}>
-      <p className="demo-caption">
-        Demo account · Changes last until refresh. No real sign-in or
-        notifications.
-      </p>
+    <section className="account-page">
+      <p className="account-caption">Signed in securely with Google</p>
       <div className="account-shell">
         <div className="account-interior">
           <aside className="account-sidebar">
@@ -247,8 +257,8 @@ export default function Profile({
               <button
                 type="button"
                 className="account-logout"
-                onClick={() => {
-                  logOut();
+                onClick={async () => {
+                  await logOut();
                   navigate("/login", { replace: true });
                 }}
               >

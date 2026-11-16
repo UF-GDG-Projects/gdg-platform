@@ -370,9 +370,6 @@ export default function Resources() {
         ))}
       </div>
 
-      <footer className="mt-6 text-[13px] leading-[1.4] text-[#6a6d73]">
-        Curated by GDG on Campus at the University of Florida.
-      </footer>
       <FAQSection />
     </section>
   );

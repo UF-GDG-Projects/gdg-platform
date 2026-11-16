@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { AccountProvider } from "./auth/AccountContext";
 import Layout from "./components/Layout";
-import { DemoAccountProvider } from "./demo/DemoAccount";
 import Events from "./pages/Events";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
@@ -13,7 +13,7 @@ import Resources from "./pages/Resources";
 
 export default function App() {
   return (
-    <DemoAccountProvider>
+    <AccountProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
@@ -41,6 +41,6 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </DemoAccountProvider>
+    </AccountProvider>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router";
 import demoAvatar from "../assets/auth/avatar.png";
 import gdgLogo from "../assets/gdg-logo.svg";
-import { useDemoAccount } from "../demo/DemoAccount";
+import { useAccount } from "../auth/AccountContext";
 
 const links = [
   { label: "Home", to: "/" },
@@ -120,7 +120,7 @@ function ProfileIcon() {
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { profile } = useDemoAccount();
+  const { profile } = useAccount();
   return (
     <header className="gdg-header">
       <style>{styles}</style>
@@ -176,7 +176,7 @@ export default function Navbar() {
             <NavLink
               to="/profile"
               className="flex min-w-0 items-center gap-2"
-              aria-label="Open demo profile"
+              aria-label="Open profile"
             >
               <span className="truncate">
                 {profile.firstName} {profile.lastName}
@@ -239,7 +239,7 @@ export default function Navbar() {
               className="gdg-mobile-link"
               onClick={() => setMenuOpen(false)}
             >
-              My Profile (demo)
+              My Profile
             </NavLink>
           ) : (
             <>

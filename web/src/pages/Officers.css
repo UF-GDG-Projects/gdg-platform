@@ -1,0 +1,146 @@
+@keyframes officer-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.25deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.25deg);
+  }
+}
+
+.officer-card {
+  position: relative;
+  display: block;
+  width: 208px;
+  height: 272px;
+  color: inherit;
+  text-decoration: none;
+  animation: officer-float 5.8s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  transform-origin: center bottom;
+  transition:
+    transform 220ms ease,
+    filter 220ms ease;
+  will-change: transform;
+}
+
+.officer-card-surface {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgb(207 207 207 / 70%);
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+  transition:
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+html[data-theme="dark"] .officer-card-surface {
+  border-color: #4b4f52;
+  background: #202124;
+}
+
+.officer-card:hover,
+.officer-card:focus-visible {
+  z-index: 2;
+  animation: none;
+  transform: translateY(-12px) scale(1.045);
+  outline: none;
+}
+
+.officer-card:hover .officer-card-surface,
+.officer-card:focus-visible .officer-card-surface {
+  border-color: rgb(66 133 244 / 55%);
+  box-shadow: 0 20px 38px rgb(45 45 45 / 22%);
+}
+
+.officer-photo {
+  transition: transform 260ms ease;
+}
+
+.officer-card:hover .officer-photo,
+.officer-card:focus-visible .officer-photo {
+  transform: scale(1.055);
+}
+
+.officer-name {
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.officer-name-long {
+  font-size: 20px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.officer-card:hover .officer-name,
+.officer-card:focus-visible .officer-name {
+  color: #1a73e8;
+  transform: translateX(4px);
+}
+
+.officer-linkedin {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: grid;
+  width: 33px;
+  height: 33px;
+  place-items: center;
+  border-radius: 10px;
+  background: #0a66c2;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgb(10 102 194 / 25%);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+}
+
+.officer-card:hover .officer-linkedin,
+.officer-card:focus-visible .officer-linkedin {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 7px 16px rgb(10 102 194 / 32%);
+}
+
+.officer-linkedin-pending {
+  opacity: 0.52;
+  filter: grayscale(0.2);
+}
+
+html[data-theme="dark"] .officer-card:hover .officer-card-surface,
+html[data-theme="dark"] .officer-card:focus-visible .officer-card-surface {
+  border-color: #8ab4f8;
+  box-shadow: 0 20px 38px rgb(0 0 0 / 50%);
+}
+
+html[data-theme="dark"] .officer-card .officer-name {
+  color: #fff;
+}
+
+html[data-theme="dark"] .officer-card:hover .officer-name,
+html[data-theme="dark"] .officer-card:focus-visible .officer-name {
+  color: #8ab4f8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .officer-card {
+    animation: none;
+    transition: none;
+  }
+  .officer-card:hover,
+  .officer-card:focus-visible {
+    transform: translateY(-4px);
+  }
+  .officer-photo,
+  .officer-name {
+    transition: none;
+  }
+}

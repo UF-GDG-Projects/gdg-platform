@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useAccount } from "../auth/AccountContext";
 import EventCard from "../components/EventCard";
-import { useDemoAccount } from "../demo/DemoAccount";
 import { useEvents } from "../hooks/useEvents";
 import { checkInToEvent, subscribeToCheckIn } from "../services/checkIns";
 import type { GDGEvent } from "../types/events";
@@ -21,7 +21,7 @@ function EventDialog({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
-  const { user, profile, loading: accountLoading } = useDemoAccount();
+  const { user, profile, isLoading: accountLoading } = useAccount();
 
   const [now, setNow] = useState(Date.now());
   const [checkedIn, setCheckedIn] = useState(false);
@@ -284,17 +284,22 @@ export default function Events() {
         </p>
 
         {isLoading && (
-          <p className="mt-5 text-[#767676]" role="status">
-            Loading events...
-          </p>
+          <div
+            className="mt-5 rounded-[18px] border border-[#d8d8d8] bg-white p-8 text-center text-[#767676]"
+            role="status"
+          >
+            Loading upcoming events…
+          </div>
         )}
-
-        {error && (
-          <p className="mt-5 text-red-600" role="alert">
-            Unable to load events: {error}
-          </p>
+        {!isLoading && error && (
+          <div
+            className="mt-5 rounded-[18px] border border-[#f2b8b5] bg-white p-8 text-center text-[#b3261e]"
+            role="alert"
+          >
+            {error ||
+              "Events could not be loaded right now. Please try again soon."}
+          </div>
         )}
-
         {!isLoading && !error && displayEvents.length === 0 && (
           <div className="mt-5 rounded-[18px] border border-[#d8d8d8] bg-white p-8 text-center text-[#767676]">
             No events have been added yet.

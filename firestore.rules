@@ -1,9 +1,7 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
     match /events/{eventId} {
       allow read: if true;
       allow write: if false;
@@ -57,64 +55,30 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    match /gallery_projects/{projectId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /officers/{officerId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /profiles/{userId} {
       function isOwner() {
-        return request.auth != null
-          && request.auth.uid == userId;
+        return request.auth != null && request.auth.uid == userId;
       }
 
-      function validName() {
-        return request.resource.data.full_name is string
-          && request.resource.data.full_name.size() > 0
-          && request.resource.data.full_name.size() <= 120;
-      }
-
-      allow read: if isOwner();
-
+      allow read, delete: if isOwner();
       allow create: if isOwner()
-        && request.resource.data.keys().hasOnly([
-          "full_name",
-          "google_email",
-          "profilepicture_url",
-          "username",
-          "role",
-          "attended_ids",
-          "major",
-          "minor",
-          "grad_semester",
-          "created_at",
-          "updated_at"
-        ])
-        && request.resource.data.keys().hasAll([
-          "full_name",
-          "google_email",
-          "role",
-          "attended_ids",
-          "created_at",
-          "updated_at"
-        ])
-        && validName()
-        && request.resource.data.google_email
-          == request.auth.token.email
-        && request.resource.data.role == "member"
-        && request.resource.data.attended_ids == []
-        && request.resource.data.created_at == request.time
-        && request.resource.data.updated_at == request.time;
-
+        && request.resource.data.google_email == request.auth.token.email
+        && (request.resource.data.role == "Member" || request.resource.data.role == "member")
+        && request.resource.data.attended_ids.size() == 0;
       allow update: if isOwner()
-        && validName()
-        && request.resource.data.diff(resource.data)
-          .affectedKeys().hasOnly([
-            "full_name",
-            "profilepicture_url",
-            "major",
-            "minor",
-            "grad_semester",
-            "updated_at"
-          ])
-        && request.resource.data.updated_at == request.time;
-
-      allow delete: if false;
+        && request.resource.data.google_email == request.auth.token.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.attended_ids == resource.data.attended_ids;
     }
 
     match /{document=**} {

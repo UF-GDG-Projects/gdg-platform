@@ -11,6 +11,18 @@
       rel="stylesheet"
     />
     <title>Google Developer Group · University of Florida</title>
+    <script>
+      try {
+        const settings = JSON.parse(
+          localStorage.getItem("gdg-account-settings") || "{}",
+        );
+        document.documentElement.dataset.theme = settings.dark
+          ? "dark"
+          : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

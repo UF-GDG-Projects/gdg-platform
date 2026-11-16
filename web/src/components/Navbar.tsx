@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router";
 import demoAvatar from "../assets/auth/avatar.png";
 import gdgLogo from "../assets/gdg-logo.svg";
-import { useDemoAccount } from "../demo/DemoAccount";
+import { useAccount } from "../auth/AccountContext";
 
 const links = [
   { label: "Home", to: "/" },
@@ -10,10 +10,10 @@ const links = [
   { label: "Gallery", to: "/gallery" },
   { label: "Officers", to: "/officers" },
   { label: "Resources", to: "/resources" },
-  { label: "FAQ", to: "/faq" },
 ];
 
 const DISCORD_INVITE = "https://discord.gg/B8hzpMvCQ";
+const INSTAGRAM_URL = "https://www.instagram.com/gdgatuf/";
 
 const styles = `
   .gdg-header { position:relative; z-index:50; margin:0 auto; padding:30px 30px 0; width:100%; max-width:1440px; box-sizing:border-box; }
@@ -120,7 +120,7 @@ function ProfileIcon() {
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { profile } = useDemoAccount();
+  const { profile } = useAccount();
   return (
     <header className="gdg-header">
       <style>{styles}</style>
@@ -150,14 +150,16 @@ export default function Navbar() {
           </nav>
         </div>
         <div className="gdg-social-links">
-          <span
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noreferrer"
             className="gdg-social gdg-instagram"
-            role="img"
-            title="Instagram link not configured yet"
-            aria-label="Instagram (coming soon)"
+            title="Follow GDG at UF on Instagram"
+            aria-label="Follow GDG at UF on Instagram"
           >
             <InstagramIcon />
-          </span>
+          </a>
           <a
             href={DISCORD_INVITE}
             target="_blank"
@@ -174,7 +176,7 @@ export default function Navbar() {
             <NavLink
               to="/profile"
               className="flex min-w-0 items-center gap-2"
-              aria-label="Open demo profile"
+              aria-label="Open profile"
             >
               <span className="truncate">
                 {profile.firstName} {profile.lastName}
@@ -237,7 +239,7 @@ export default function Navbar() {
               className="gdg-mobile-link"
               onClick={() => setMenuOpen(false)}
             >
-              My Profile (demo)
+              My Profile
             </NavLink>
           ) : (
             <>
@@ -257,6 +259,15 @@ export default function Navbar() {
               </NavLink>
             </>
           )}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="gdg-mobile-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            Instagram
+          </a>
         </nav>
       )}
     </header>

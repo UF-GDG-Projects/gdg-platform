@@ -7,7 +7,7 @@ type EventsState = {
   error: string | null;
 };
 
-export function useEvents(maxResults = 50): EventsState {
+export function useEvents(): EventsState {
   const [state, setState] = useState<EventsState>({
     events: [],
     isLoading: true,
@@ -22,9 +22,8 @@ export function useEvents(maxResults = 50): EventsState {
           error instanceof Error ? error.message : "Unable to load events.";
         setState({ events: [], isLoading: false, error: message });
       },
-      maxResults,
     );
-  }, [maxResults]);
+  }, []);
 
   return state;
 }

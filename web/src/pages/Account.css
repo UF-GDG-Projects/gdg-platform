@@ -78,11 +78,18 @@
   font-size: 28px;
   font-weight: 400;
 }
-.demo-caption {
+.demo-caption,
+.account-caption {
   font-size: 12px;
   color: #5f6368;
   text-align: center;
   margin: 14px 16px;
+}
+.account-loading {
+  min-height: 50svh;
+  display: grid;
+  place-items: center;
+  color: #5f6368;
 }
 .demo-back {
   color: #1a73e8;
@@ -346,22 +353,49 @@
 .reminder-options:disabled {
   opacity: 0.45;
 }
-.account-dark .account-interior,
-.account-dark .account-sidebar,
-.account-dark input,
 .settings-preview-dark {
   background: #202124;
   color: #f4f4f4;
 }
-.account-dark .account-shell {
+html[data-theme="dark"] .personal-panel,
+html[data-theme="dark"] .account-shell {
   background: #303134;
 }
-.account-dark .account-email,
-.account-dark label,
-.account-dark input,
-.account-dark .account-status,
-.account-dark .setting-row p {
+html[data-theme="dark"] .personal-form,
+html[data-theme="dark"] .account-interior,
+html[data-theme="dark"] .account-sidebar,
+html[data-theme="dark"] .settings-form,
+html[data-theme="dark"] .profile-form input {
+  background-color: #202124;
+  color: #f1f3f4;
+}
+html[data-theme="dark"] .personal-form {
+  background-image: none;
+}
+html[data-theme="dark"] .personal-form input {
+  border-color: #5f6368;
+  background: #292a2d;
+  color: #f1f3f4;
+}
+html[data-theme="dark"] .account-email,
+html[data-theme="dark"] .account-caption,
+html[data-theme="dark"] .account-loading,
+html[data-theme="dark"] .profile-form label,
+html[data-theme="dark"] .account-status,
+html[data-theme="dark"] .setting-row p {
   color: #bdc1c6;
+}
+html[data-theme="dark"] .account-identity > div > p:first-child {
+  color: #fff;
+}
+html[data-theme="dark"] .account-sidebar nav img:not(.account-identity img),
+html[data-theme="dark"] .account-input img,
+html[data-theme="dark"] .avatar-edit img {
+  filter: invert(1) brightness(1.5);
+}
+html[data-theme="dark"] .avatar-edit {
+  border-color: #5f6368;
+  background: #303134;
 }
 .settings-preview-dark {
   padding: 28px 12px 12px;

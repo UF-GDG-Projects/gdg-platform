@@ -3,7 +3,6 @@ import { eventSchema } from "@shared/schemas";
 import {
   collection,
   type DocumentData,
-  limit,
   onSnapshot,
   orderBy,
   type QueryDocumentSnapshot,
@@ -71,12 +70,10 @@ function parseEvent(
 export function subscribeToEvents(
   onEvents: (events: FirestoreEvent[]) => void,
   onError: (error: Error) => void,
-  maxResults = 50,
 ): Unsubscribe {
   const eventsQuery = query(
     collection(getFirebaseDb(), "events"),
     orderBy("starts_at", "asc"),
-    limit(maxResults),
   );
 
   return onSnapshot(

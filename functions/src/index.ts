@@ -11,6 +11,7 @@ import { initializeApp } from "firebase-admin/app";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { setGlobalOptions } from "firebase-functions";
 import { onRequest } from "firebase-functions/v2/https";
+import { z } from "zod";
 import { createEventSchema } from "../../shared/schemas.js";
 
 // import {onRequest} from "firebase-functions/https";
@@ -74,6 +75,63 @@ export const getEvents = onRequest(async (request, response) => {
   }
 });
 
+export const readEvent = onRequest(async (request, response) => {
+  if (request.method !== "GET") {
+    response.set("Allow", "GET");
+    response.status(405).json({ error: "Use a GET request." });
+    return;
+  }
+
+  const documentId = request.query.document_id;
+  if (
+    typeof documentId !== "string" ||
+    documentId.trim().length === 0 ||
+    documentId.includes("/") ||
+    documentId === "." ||
+    documentId === ".." ||
+    Buffer.byteLength(documentId, "utf8") > 1500
+  ) {
+    response.status(400).json({ error: "A valid document_id is required." });
+    return;
+  }
+
+  try {
+    const database = getFirestore();
+    const document = await database.collection("events").doc(documentId).get();
+    const data = document.data();
+
+    if (!document.exists || !data) {
+      response.status(404).json({ error: "Event not found." });
+      return;
+    }
+
+    response.status(200).json({
+      event: {
+        document_id: document.id,
+        event_id: data.event_id,
+        title: data.title,
+        description: data.description,
+        address: data.address,
+        location_name: data.location_name,
+        points_value: data.points_value,
+        image_url: data.image_url,
+        created_at: data.created_at?.toDate
+          ? data.created_at.toDate().toISOString()
+          : null,
+        starts_at: data.starts_at?.toDate
+          ? data.starts_at.toDate().toISOString()
+          : null,
+        ends_at: data.ends_at?.toDate
+          ? data.ends_at.toDate().toISOString()
+          : null,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to read event:", error);
+    response.status(500).json({ error: "Unable to retrieve event." });
+  }
+});
+
 export const createEvent = onRequest(async (request, response) => {
   if (request.method !== "POST") {
     response.set("Allow", "POST");
@@ -117,6 +175,98 @@ export const createEvent = onRequest(async (request, response) => {
   } catch (error) {
     console.error("Failed to create event:", error);
     response.status(500).json({ error: "Unable to create event." });
+  }
+});
+
+const updateEventSchema = z.object(createEventSchema.shape).partial();
+
+export const updateEvent = onRequest(async (request, response) => {
+  if (request.method !== "PATCH") {
+    response.set("Allow", "PATCH");
+    response.status(405).json({ error: "Use a PATCH request." });
+    return;
+  }
+
+  if (
+    process.env.FUNCTIONS_EMULATOR !== "true" ||
+    !process.env.FIRESTORE_EMULATOR_HOST
+  ) {
+    response.status(403).json({
+      error: "Event updates are currently available only in local testing.",
+    });
+    return;
+  }
+
+  const documentId = request.query.document_id;
+  if (
+    typeof documentId !== "string" ||
+    documentId.trim().length === 0 ||
+    documentId.includes("/") ||
+    documentId === "." ||
+    documentId === ".." ||
+    Buffer.byteLength(documentId, "utf8") > 1500
+  ) {
+    response.status(400).json({ error: "A valid document_id is required." });
+    return;
+  }
+
+  try {
+    const result = updateEventSchema.safeParse(request.body);
+
+    if (!result.success) {
+      response.status(400).json({
+        error: "Invalid event details.",
+        issues: result.error.issues,
+      });
+      return;
+    }
+
+    const changes = result.data;
+    if (Object.keys(changes).length === 0) {
+      response.status(400).json({
+        error: "Provide at least one event field to update.",
+      });
+      return;
+    }
+
+    const database = getFirestore();
+    const document = database.collection("events").doc(documentId);
+    const outcome = await database.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(document);
+      if (!snapshot.exists) {
+        return "not_found" as const;
+      }
+
+      const stored = snapshot.data();
+      const startsAt = changes.starts_at ?? stored?.starts_at?.toDate?.();
+      const endsAt = changes.ends_at ?? stored?.ends_at?.toDate?.();
+      if (startsAt && endsAt && endsAt <= startsAt) {
+        return "invalid_dates" as const;
+      }
+
+      transaction.update(document, {
+        ...changes,
+        updated_at: FieldValue.serverTimestamp(),
+      });
+      return "updated" as const;
+    });
+
+    if (outcome === "not_found") {
+      response.status(404).json({ error: "Event not found." });
+      return;
+    }
+
+    if (outcome === "invalid_dates") {
+      response.status(400).json({
+        error: "End time must be after start time.",
+      });
+      return;
+    }
+
+    response.status(200).json({ document_id: documentId });
+  } catch (error) {
+    console.error("Failed to update event:", error);
+    response.status(500).json({ error: "Unable to update event." });
   }
 });
 

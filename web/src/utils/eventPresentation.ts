@@ -12,6 +12,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   hour: "numeric",
   minute: "2-digit",
+  timeZone: "America/New_York",
 });
 
 function eventAccent(eventId: string): GDGEvent["accent"] {
@@ -19,11 +20,13 @@ function eventAccent(eventId: string): GDGEvent["accent"] {
     (total, character) => total + character.charCodeAt(0),
     0,
   );
+
   return accents[hash % accents.length];
 }
 
 export function presentEvent(event: FirestoreEvent): GDGEvent {
   const normalizedTitle = event.title.toLowerCase();
+
   const fallbackImage = normalizedTitle.includes("devfest")
     ? devfestSpeaker
     : normalizedTitle.includes("gemini")
@@ -43,6 +46,8 @@ export function presentEvent(event: FirestoreEvent): GDGEvent {
     description: event.description,
     status: event.ends_at < new Date() ? "past" : "upcoming",
     accent: eventAccent(event.event_id),
+    startsAt: event.starts_at,
+    endsAt: event.ends_at,
     imageUrl,
     imageAlt: imageUrl ? `${event.title} event artwork` : undefined,
   };

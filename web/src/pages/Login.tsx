@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import googleLogo from "../assets/auth/google.png";
-import { useDemoAccount } from "../demo/DemoAccount";
+import { signInWithGoogle } from "../firebase/auth";
 import "./Login.css";
 
 export default function Login({
@@ -8,9 +9,28 @@ export default function Login({
 }: {
   mode?: "login" | "signup";
 }) {
-  const { signIn } = useDemoAccount();
-  const navigate = useNavigate();
   const signup = mode === "signup";
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function handleGoogleSignIn() {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const { hasProfile } = await signInWithGoogle();
+
+      navigate(hasProfile ? "/profile" : "/signup/personal", { replace: true });
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Google sign-in failed.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="auth-page" aria-label={signup ? "Sign up" : "Log in"}>
       <div className="auth-panel">
@@ -18,27 +38,31 @@ export default function Login({
           className={`auth-panel-surface${signup ? " auth-panel-signup" : ""}`}
           aria-hidden="true"
         />
+
         <nav className="auth-tabs" aria-label="Account access">
           <NavLink to="/login">Log In</NavLink>
           <NavLink to="/signup">Sign Up</NavLink>
         </nav>
+
         <button
           className="auth-google"
           type="button"
-          onClick={() => {
-            if (signup) navigate("/signup/personal");
-            else {
-              signIn();
-              navigate("/profile");
-            }
-          }}
+          disabled={loading}
+          onClick={handleGoogleSignIn}
         >
           <img src={googleLogo} width="24" height="24" alt="" />
-          {signup ? "Sign Up with Google" : "Login with Google"}
+          {loading
+            ? "Connecting to Google..."
+            : signup
+              ? "Sign Up with Google"
+              : "Login with Google"}
         </button>
-        <p className="auth-notice">
-          Demo preview · Continue without a Google account.
-        </p>
+
+        {message && (
+          <p className="auth-notice" role="alert">
+            {message}
+          </p>
+        )}
       </div>
     </section>
   );

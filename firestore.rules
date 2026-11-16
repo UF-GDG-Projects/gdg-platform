@@ -1,10 +1,55 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
     match /events/{eventId} {
       allow read: if true;
       allow write: if false;
+
+      match /checkins/{userId} {
+        function signedInOwner() {
+          return request.auth != null
+            && request.auth.uid == userId;
+        }
+
+        function eventIsActive() {
+          return exists(
+            /databases/$(database)/documents/events/$(eventId)
+          )
+          && request.time >= get(
+            /databases/$(database)/documents/events/$(eventId)
+          ).data.starts_at
+          && request.time <= get(
+            /databases/$(database)/documents/events/$(eventId)
+          ).data.ends_at;
+        }
+
+        allow get: if signedInOwner();
+        allow list: if false;
+
+        allow create: if signedInOwner()
+          && exists(
+            /databases/$(database)/documents/profiles/$(userId)
+          )
+          && eventIsActive()
+          && request.resource.data.keys().hasOnly([
+            "event_id",
+            "user_id",
+            "checked_in_at"
+          ])
+          && request.resource.data.keys().hasAll([
+            "event_id",
+            "user_id",
+            "checked_in_at"
+          ])
+          && request.resource.data.event_id == eventId
+          && request.resource.data.user_id == userId
+          && request.resource.data.checked_in_at == request.time;
+
+        allow update, delete: if false;
+      }
     }
 
     match /resources/{resourceId} {
@@ -13,7 +58,63 @@ service cloud.firestore {
     }
 
     match /profiles/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      function isOwner() {
+        return request.auth != null
+          && request.auth.uid == userId;
+      }
+
+      function validName() {
+        return request.resource.data.full_name is string
+          && request.resource.data.full_name.size() > 0
+          && request.resource.data.full_name.size() <= 120;
+      }
+
+      allow read: if isOwner();
+
+      allow create: if isOwner()
+        && request.resource.data.keys().hasOnly([
+          "full_name",
+          "google_email",
+          "profilepicture_url",
+          "username",
+          "role",
+          "attended_ids",
+          "major",
+          "minor",
+          "grad_semester",
+          "created_at",
+          "updated_at"
+        ])
+        && request.resource.data.keys().hasAll([
+          "full_name",
+          "google_email",
+          "role",
+          "attended_ids",
+          "created_at",
+          "updated_at"
+        ])
+        && validName()
+        && request.resource.data.google_email
+          == request.auth.token.email
+        && request.resource.data.role == "member"
+        && request.resource.data.attended_ids == []
+        && request.resource.data.created_at == request.time
+        && request.resource.data.updated_at == request.time;
+
+      allow update: if isOwner()
+        && validName()
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([
+            "full_name",
+            "profilepicture_url",
+            "major",
+            "minor",
+            "grad_semester",
+            "updated_at"
+          ])
+        && request.resource.data.updated_at == request.time;
+
+      allow delete: if false;
     }
 
     match /{document=**} {

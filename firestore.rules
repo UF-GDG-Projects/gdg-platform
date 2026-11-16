@@ -4,23 +4,60 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Events are publicly readable.
-    // Client-side changes are not allowed.
     match /events/{eventId} {
       allow read: if true;
       allow write: if false;
+
+      match /checkins/{userId} {
+        function signedInOwner() {
+          return request.auth != null
+            && request.auth.uid == userId;
+        }
+
+        function eventIsActive() {
+          return exists(
+            /databases/$(database)/documents/events/$(eventId)
+          )
+          && request.time >= get(
+            /databases/$(database)/documents/events/$(eventId)
+          ).data.starts_at
+          && request.time <= get(
+            /databases/$(database)/documents/events/$(eventId)
+          ).data.ends_at;
+        }
+
+        allow get: if signedInOwner();
+        allow list: if false;
+
+        allow create: if signedInOwner()
+          && exists(
+            /databases/$(database)/documents/profiles/$(userId)
+          )
+          && eventIsActive()
+          && request.resource.data.keys().hasOnly([
+            "event_id",
+            "user_id",
+            "checked_in_at"
+          ])
+          && request.resource.data.keys().hasAll([
+            "event_id",
+            "user_id",
+            "checked_in_at"
+          ])
+          && request.resource.data.event_id == eventId
+          && request.resource.data.user_id == userId
+          && request.resource.data.checked_in_at == request.time;
+
+        allow update, delete: if false;
+      }
     }
 
-    // Resources are publicly readable.
-    // Client-side changes are not allowed.
     match /resources/{resourceId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Each member can access only their own profile.
     match /profiles/{userId} {
-
       function isOwner() {
         return request.auth != null
           && request.auth.uid == userId;
@@ -32,10 +69,8 @@ service cloud.firestore {
           && request.resource.data.full_name.size() <= 120;
       }
 
-      // Read your own profile.
       allow read: if isOwner();
 
-      // Create a new profile after Google sign-in.
       allow create: if isOwner()
         && request.resource.data.keys().hasOnly([
           "full_name",
@@ -66,8 +101,6 @@ service cloud.firestore {
         && request.resource.data.created_at == request.time
         && request.resource.data.updated_at == request.time;
 
-      // Members can edit personal information,
-      // but cannot change roles or attendance records.
       allow update: if isOwner()
         && validName()
         && request.resource.data.diff(resource.data)
@@ -81,11 +114,9 @@ service cloud.firestore {
           ])
         && request.resource.data.updated_at == request.time;
 
-      // Members cannot delete their profile.
       allow delete: if false;
     }
 
-    // Everything else is denied by default.
     match /{document=**} {
       allow read, write: if false;
     }

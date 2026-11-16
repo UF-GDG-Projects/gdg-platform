@@ -1,8 +1,7 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import { DemoAccountProvider } from "./demo/DemoAccount";
 import Events from "./pages/Events";
-import FAQ from "./pages/FAQ";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -34,7 +33,10 @@ export default function App() {
               path="profile/settings"
               element={<Profile key="settings" settingsPage />}
             />
-            <Route path="faq" element={<FAQ />} />
+            <Route
+              path="faq"
+              element={<Navigate to="/resources#faq" replace />}
+            />
             <Route path="*" element={<Placeholder title="Page not found" />} />
           </Route>
         </Routes>

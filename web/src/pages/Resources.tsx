@@ -14,8 +14,6 @@ type ResourceCategory = {
   resources: Resource[];
 };
 
-const categoryColors = ["#4285F4", "#EA4335", "#FBBC05", "#34A853"];
-
 const curatedCategories: ResourceCategory[] = [
   {
     title: "General",
@@ -153,6 +151,34 @@ const curatedCategories: ResourceCategory[] = [
   },
 ];
 
+const questions = [
+  {
+    question: "Do I need programming experience to join?",
+    answer:
+      "All skill levels are welcome, but our projects require that you be willing to learn. Our tech leads will often host workshops, share resources & advice, and provide all the help that you need to get started.",
+  },
+  {
+    question: "Who should I reach out to if I have questions?",
+    answer:
+      "The quickest way to get in touch with the team is to reach out to an officer on Discord.",
+  },
+  {
+    question: "How frequently do events and workshops occur?",
+    answer:
+      "Our technical leads host biweekly workshops, and we host numerous social events throughout the semester. Join our Discord to stay updated.",
+  },
+  {
+    question: "What should I bring to the workshops?",
+    answer:
+      "You should bring a notebook, pen, laptop, and most importantly, a curious mind.",
+  },
+  {
+    question: "Why should I join?",
+    answer:
+      "Joining the UF Google Developer Group on Campus is a great way to gain experience for your CV and develop a strong project portfolio. Working on open source projects or leading a group as a tech-lead positively distinguishes you from other job applicants.",
+  },
+];
+
 function ExternalLinkIcon() {
   return (
     <svg
@@ -181,7 +207,7 @@ function ResourceCard({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-[#e7e7e7] bg-white p-6 ${className}`}
+      className={`rounded-2xl border border-[#e7e7e7] bg-white p-6 shadow-[inset_0_1px_2px_rgba(0,0,0,.16)] ${className}`}
       aria-label={`${category.title} resources`}
     >
       <h2 className="flex items-center gap-3 text-[23px] leading-[1.4] font-bold text-[#202124]">
@@ -225,6 +251,60 @@ function ResourceCard({
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function FAQSection() {
+  return (
+    <section id="faq" className="mt-5 scroll-mt-24">
+      <header className="mb-5">
+        <h2 className="text-[clamp(38px,4vw,48px)] font-bold leading-[1.4] tracking-[-0.035em] text-[#202124]">
+          Frequently Asked Question
+        </h2>
+        <p className="mt-1 text-[18px] leading-[1.4] text-[#6a6d73]">
+          For any questions you may still have
+        </p>
+      </header>
+      <div className="min-h-[353px] overflow-hidden rounded-2xl border border-[#e7e7e7] bg-white shadow-[inset_0_1px_2px_rgba(0,0,0,.16)]">
+        {questions.map((item) => (
+          <details
+            key={item.question}
+            className="group border-b border-[#e8e8e8] last:border-b-0"
+          >
+            <summary className="flex min-h-[70px] cursor-pointer list-none items-center gap-4 px-5 py-4 outline-none transition-colors hover:bg-[#fafafa] focus-visible:bg-[#f3f7ff] sm:px-7 [&::-webkit-details-marker]:hidden">
+              <span className="flex-1 text-base font-semibold leading-6 text-[#2d2d2d] sm:text-lg">
+                {item.question}
+              </span>
+              <span className="shrink-0 text-[#6a6d73] transition-transform duration-200 group-open:rotate-45">
+                <PlusIcon />
+              </span>
+            </summary>
+            <div className="px-5 pb-5 sm:px-7">
+              <p className="max-w-[980px] text-[15px] leading-6 text-[#686868]">
+                {item.answer}
+              </p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Resources() {
   const firebaseResources = useResources();
   const categories = useMemo(() => {
@@ -234,21 +314,14 @@ export default function Resources() {
     }));
 
     for (const resource of firebaseResources) {
-      let category = merged.find(
-        (item) =>
-          item.title.toLocaleLowerCase() ===
-          resource.category.toLocaleLowerCase(),
-      );
+      const category =
+        merged.find(
+          (item) =>
+            item.title.toLocaleLowerCase() ===
+            resource.category.toLocaleLowerCase(),
+        ) ?? merged[0];
 
-      if (!category) {
-        category = {
-          title: resource.category,
-          subtitle: `More tools and learning from ${resource.provider}`,
-          color: categoryColors[merged.length % categoryColors.length],
-          resources: [],
-        };
-        merged.push(category);
-      }
+      if (!category) continue;
 
       const normalizedUrl = resource.url.replace(/^\((.*)\)$/, "$1");
       const isDuplicate = category.resources.some(
@@ -270,13 +343,14 @@ export default function Resources() {
   }, [firebaseResources]);
 
   return (
-    <section className="relative mx-auto w-full max-w-[1440px] px-6 pb-20 pt-[68px] sm:px-8 lg:px-[120px]">
+    <section className="relative mx-auto mb-12 mt-[65px] w-[calc(100%-32px)] max-w-[1242px] rounded-[18px] border border-[#c2c2c2b3] bg-[#f4f4f4] p-5 shadow-[0_1px_2px_rgba(0,0,0,.25)] sm:p-[21px]">
       <header className="mb-6">
-        <h1 className="text-[clamp(44px,5vw,64px)] leading-[1.4] font-bold tracking-[-0.035em] text-[#202124]">
+        <h1 className="text-[clamp(42px,4vw,48px)] font-bold leading-[1.4] tracking-[-0.035em] text-[#202124]">
           Resources
         </h1>
         <p className="mt-1 text-[18px] leading-[1.4] text-[#6a6d73]">
-          Helpful tools, tutorials, and student offers.
+          Helpful tools, tutorials, and student offers. Pick a topic and start
+          exploring.
         </p>
       </header>
 
@@ -297,8 +371,9 @@ export default function Resources() {
       </div>
 
       <footer className="mt-6 text-[13px] leading-[1.4] text-[#6a6d73]">
-        Curated by GDG at UF.
+        Curated by GDG on Campus at the University of Florida.
       </footer>
+      <FAQSection />
     </section>
   );
 }
